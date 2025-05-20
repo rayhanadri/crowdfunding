@@ -51,7 +51,7 @@ CREATE TABLE transactions (
 );
 
 -- Example Data
-INSERT INTO users (name, email, password_hash)
+INSERT INTO users (name, email, password)
 VALUES
 ('Andi Wijaya', 'andi@example.com', 'hashed_password_1'),
 ('Siti Rahma', 'siti@example.com', 'hashed_password_2'),

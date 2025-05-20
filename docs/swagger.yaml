@@ -1,5 +1,57 @@
 basePath: /api/v1/
 definitions:
+  model.Campaign:
+    properties:
+      category:
+        type: string
+      collected_amount:
+        type: number
+      created_at:
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      min_donation:
+        type: number
+      status:
+        type: string
+      target_amount:
+        type: number
+      title:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      user_id:
+        type: integer
+    type: object
+  model.Donation:
+    properties:
+      amount:
+        type: number
+      campaign:
+        $ref: '#/definitions/model.Campaign'
+      campaign_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      user_id:
+        type: integer
+    type: object
   model.Response:
     properties:
       data: {}
@@ -7,6 +59,46 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  model.Transaction:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      donation:
+        $ref: '#/definitions/model.Donation'
+      donation_id:
+        type: integer
+      id:
+        type: integer
+      invoice_description:
+        type: string
+      invoice_id:
+        type: string
+      invoice_url:
+        type: string
+      payment_method:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
     type: object
   model.UserLogin:
     properties:
@@ -31,6 +123,122 @@ info:
   title: Crowdfunding API
   version: "1.0"
 paths:
+  /transactions:
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction for a user
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Transaction object
+        in: body
+        name: model.Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create a new transaction
+      tags:
+      - transactions
+  /transactions/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific transaction by its ID
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get Transaction details by Transaction ID
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Get details of a specific transaction by its ID
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction object
+        in: body
+        name: model.Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Update a transaction based on the invoice status
+      tags:
+      - transactions
+  /transactions/check-update-transaction/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get details of a specific transaction by its ID and check its status
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction object
+        in: body
+        name: model.Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check and update a transaction based on the invoice status
+      tags:
+      - transactions
   /users/login:
     post:
       consumes:

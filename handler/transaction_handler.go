@@ -36,7 +36,7 @@ func NewTransactionHandler(transactionRepo repository.TransactionRepository) Tra
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Success 200 {object} model.Response
-// @Router /users/{id} [get]
+// @Router /transactions/{id} [get]
 func (h *transactionHandler) GetAllTransaction(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
@@ -79,7 +79,7 @@ func (h *transactionHandler) GetAllTransaction(c echo.Context) error {
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param model.Transaction body model.Transaction true "Transaction object"
 // @Success 201 {object} model.Response
-// @Router /transactions/create-transaction [post] // Updated the router path to use POST method
+// @Router /transactions [post] // Updated the router path to use POST method
 func (h *transactionHandler) CreateTransaction(c echo.Context) error {
 	//
 	userID := c.Get("user_id")
@@ -183,7 +183,7 @@ func (h *transactionHandler) CreateTransaction(c echo.Context) error {
 // @Param id path int true "Transaction ID"
 // @Param model.Transaction body model.Transaction true "Transaction object"
 // @Success 200 {object} model.Response
-// @Router /transactions/update-transaction/{id} [put] // Updated the router path to use PUT method
+// @Router /transactions/{id} [put] // Updated the router path to use PUT method
 func (h *transactionHandler) UpdateTransaction(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
@@ -239,9 +239,9 @@ func (h *transactionHandler) UpdateTransaction(c echo.Context) error {
 	})
 }
 
-// UpdateTransaction godoc
-// @Summary Update a transaction based on the invoice status
-// @Description Get details of a specific transaction by its ID
+// CheckUpdateTransaction godoc
+// @Summary Check and update a transaction based on the invoice status
+// @Description Get details of a specific transaction by its ID and check its status
 // @Tags transactions
 // @Accept json
 // @Produce json
@@ -249,7 +249,7 @@ func (h *transactionHandler) UpdateTransaction(c echo.Context) error {
 // @Param id path int true "Transaction ID"
 // @Param model.Transaction body model.Transaction true "Transaction object"
 // @Success 200 {object} model.Response
-// @Router /transactions/update-transaction/{id} [put] // Updated the router path to use PUT method
+// @Router /transactions/check-update-transaction/{id} [put] // Updated the router path to use PUT method
 func (h *transactionHandler) CheckUpdateTransaction(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
