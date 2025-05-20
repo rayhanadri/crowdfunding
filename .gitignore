@@ -5,7 +5,7 @@
 
 # Ignore Go modules
 /go.sum
-/go.mod
+# /go.mod
 
 # Ignore vendor directory
 /vendor/
