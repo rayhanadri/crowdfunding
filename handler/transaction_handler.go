@@ -5,13 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"crowdfund/external"
+	"github.com/labstack/echo/v4"
 
+	"crowdfund/external"
 	"crowdfund/model"
 	"crowdfund/repository"
-
-
-	"github.com/labstack/echo/v4"
 )
 
 type TransactionHandler interface {
@@ -146,7 +144,7 @@ func (h *transactionHandler) CreateTransaction(c echo.Context) error {
 	sendTransId := "transaction-" + strconv.Itoa(transaction.ID)
 
 	// Create invoice using external API
-	invoice, err := external.CreateInvoice(sendTransId, int(transaction.Amount), transaction.InvoiceDescription, transaction.InvoiceDescription)
+	invoice, err := external.CreateInvoice(sendTransId, int(transaction.Amount), transaction.Donation.User.Email, transaction.InvoiceDescription)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
 			Status:  http.StatusInternalServerError,

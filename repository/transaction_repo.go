@@ -103,6 +103,10 @@ func (r *transactionRepository) CreateTransaction(user_id int, transaction *mode
 		return nil, errors.New("user not found")
 	}
 
+	//fill transaction description based on campaign title
+	transaction.InvoiceDescription = campaign.Title
+
+	//query create db
 	if err := r.db.Create(transaction).Error; err != nil {
 		return nil, err
 	}
@@ -110,6 +114,7 @@ func (r *transactionRepository) CreateTransaction(user_id int, transaction *mode
 	// Assign All Inner Object for json
 	campaign.User = *userCreator
 	donation.Campaign = *campaign
+	donation.User = *user
 	transaction.Donation = *donation
 
 	return transaction, nil
