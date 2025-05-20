@@ -1,0 +1,595 @@
+package handler
+
+import (
+	"fmt"
+	"library-api/config"
+	"library-api/external"
+	"library-api/model"
+	"library-api/repository"
+	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/labstack/echo/v4"
+)
+
+type TransactionHandler interface {
+	GetAllTransaction(c echo.Context) error
+	CreateTransaction(c echo.Context) error
+	GetTransactionByID(c echo.Context) error
+	UpdateTransaction(c echo.Context) error
+	CancelTransaction(c echo.Context) error
+}
+
+type transactionHandler struct {
+	transactionRepo repository.TransactionRepository
+}
+
+func NewTransactionHandler(transactionRepo repository.TransactionRepository) TransactionHandler {
+	return &transactionHandler{transactionRepo: transactionRepo}
+}
+
+// GetAllTransactions godoc
+// @Summary Get all transactions for a user
+// @Description Get all transactions for an active user
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <access_token>"
+// @Success 200 {object} model.Response
+// @Router /users/{id} [get]
+func (h *transactionHandler) GetAllTransaction(c echo.Context) error {
+	//get user id from context
+	userID := c.Get("user_id")
+	if userID == nil {
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			Status:  http.StatusUnauthorized,
+			Message: "User not authenticated",
+		})
+	}
+
+	userIdFloat, ok := userID.(float64)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Invalid user ID",
+		})
+	}
+	userIdInt := int(userIdFloat)
+
+	transactions, err := h.transactionRepo.GetAllTransaction(userIdInt)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Status:  http.StatusInternalServerError,
+			Message: "Internal Server Error",
+		})
+	}
+	return c.JSON(200, model.Response{
+		Status:  200,
+		Message: "Success",
+		Data:    transactions,
+	})
+}
+
+// CreateTransaction godoc
+// @Summary Create a new transaction
+// @Description Create a new transaction for a user
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <access_token>"
+// @Param model.Transaction body model.Transaction true "Transaction object"
+// @Success 201 {object} model.Response
+// @Router /transactions/create-transaction [post] // Updated the router path to use POST method
+func (h *transactionHandler) CreateTransaction(c echo.Context) error {
+	//
+	userID := c.Get("user_id")
+	if userID == nil {
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			Status:  http.StatusUnauthorized,
+			Message: "User not authenticated",
+		})
+	}
+
+	userIdFloat, ok := userID.(float64)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Invalid user ID",
+		})
+	}
+	userIdInt := int(userIdFloat)
+
+	transaction := new(model.Transaction)
+	if err := c.Bind(transaction); err != nil {
+		return c.JSON(400, model.Response{
+			Status:  400,
+			Message: "Bad Request, Invalid request body" + err.Error(),
+		})
+	}
+
+	if transaction.UserID == 0 {
+		transaction.UserID = userIdInt
+	} else {
+		if transaction.UserID != userIdInt {
+			return c.JSON(403, model.Response{
+				Status:  403,
+				Message: "Forbidden",
+			})
+		}
+	}
+
+	//
+	var user model.User
+	db := config.DB
+	if err := db.Where("id = ?", transaction.UserID).First(&user).Error; err != nil {
+		return c.JSON(404, model.Response{
+			Status:  404,
+			Message: "User not found",
+		})
+	}
+
+	//transaction check
+	if transaction.PaymentMethod == "App Balance" {
+		if user.Balance < transaction.Amount {
+
+			// Release the book if the transaction is a rent and the user has insufficient balance
+			if transaction.TransactionType == "Rent" {
+				var rent model.Rent
+				err := db.Where("id = ?", transaction.RentID).First(&rent).Error
+				if err != nil {
+					return c.JSON(404, model.Response{
+						Status:  404,
+						Message: "Rent not found",
+					})
+				}
+				rent.RentStatus = "CANCELED"
+
+				var book model.Book
+				err = db.Where("id = ?", rent.BookID).First(&book).Error
+				if err != nil {
+					return c.JSON(404, model.Response{
+						Status:  404,
+						Message: "Book not found",
+					})
+				}
+
+				book.Stock += rent.Quantity
+				if book.Stock > 0 {
+					book.Available = true
+				} else {
+					book.Available = false
+				}
+
+				if err := db.Save(&book).Error; err != nil {
+					return c.JSON(500, model.Response{
+						Status:  500,
+						Message: "Internal Server Error",
+					})
+				}
+				if err := db.Save(&rent).Error; err != nil {
+					return c.JSON(500, model.Response{
+						Status:  500,
+						Message: "Internal Server Error",
+					})
+				}
+
+			}
+
+			return c.JSON(400, model.Response{
+				Status:  400,
+				Message: "Insufficient balance",
+			})
+		}
+		// Deduct the amount from the user's balance
+		user.Balance -= transaction.Amount
+		if err := db.Save(&user).Error; err != nil {
+			return c.JSON(500, model.Response{
+				Status:  500,
+				Message: "Internal Server Error",
+			})
+		}
+
+		transaction.Status = "PAID"
+		transaction.InvoiceID = "PAID_BY_USER_APP_BALANCE"
+	}
+
+	if transaction.PaymentMethod == "Payment Gateway" {
+		var invoice external.InvoiceResponse
+		invoice, err := external.CreateInvoice(transaction.Amount, user.Email, transaction.Description)
+		if err != nil {
+			return c.JSON(500, model.Response{
+				Status:  500,
+				Message: "Failed to create invoice",
+			})
+		}
+		transaction.InvoiceID = invoice.ID
+		transaction.InvoiceURL = invoice.InvoiceURL
+		transaction.Status = "PENDING"
+	}
+
+	result, err := h.transactionRepo.CreateTransaction(userIdInt, transaction)
+	if err != nil {
+		return c.JSON(500, model.Response{
+			Status:  500,
+			Message: "Internal Server Error, Error when creating transaction",
+		})
+	}
+
+	if transaction.TransactionType == "Rent" && transaction.PaymentMethod == "App Balance" && transaction.Status == "PAID" {
+		// get rent transaction
+		var rent model.Rent
+		err := db.Where("id = ?", transaction.RentID).First(&rent).Error
+		if err != nil {
+			return c.JSON(404, model.Response{
+				Status:  404,
+				Message: "Rent not found",
+			})
+		}
+
+		if rent.RentStatus != "PENDING" {
+			return c.JSON(http.StatusBadRequest, model.Response{
+				Status:  http.StatusBadRequest,
+				Message: "Rent already paid",
+			})
+		}
+
+		// update rent status to "ACTIVE"
+		rent.RentStatus = "ACTIVE"
+		err = db.Save(&rent).Error
+		if err != nil {
+			return c.JSON(500, model.Response{
+				Status:  500,
+				Message: "Internal Server Error",
+			})
+		}
+	}
+
+	transaction = result
+
+	return c.JSON(201, model.Response{
+		Status:  201,
+		Message: "Success",
+		Data:    transaction,
+	})
+}
+
+// UpdateTransaction godoc
+// @Summary Update a transaction based on the invoice status
+// @Description Get details of a specific transaction by its ID
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <access_token>"
+// @Param id path int true "Transaction ID"
+// @Param model.Transaction body model.Transaction true "Transaction object"
+// @Success 200 {object} model.Response
+// @Router /transactions/update-transaction/{id} [put] // Updated the router path to use PUT method
+func (h *transactionHandler) UpdateTransaction(c echo.Context) error {
+	//get user id from context
+	userID := c.Get("user_id")
+	if userID == nil {
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			Status:  http.StatusUnauthorized,
+			Message: "User not authenticated",
+		})
+	}
+
+	userIdFloat, ok := userID.(float64)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Invalid user ID",
+		})
+	}
+	userIdInt := int(userIdFloat)
+
+	// get transaction id from url param
+	transaction_id := c.Param("id")
+
+	// get stored transaction
+	transaction := new(model.Transaction)
+
+	// Initialize the database connection
+	var db = config.DB
+	if err := db.Where("id = ?", transaction_id).First(&transaction).Error; err != nil {
+		return c.JSON(404, model.Response{
+			Status:  404,
+			Message: "Transaction not found",
+		})
+	}
+
+	//Check if transaction already paid, return already paid, no need to update
+	if transaction.Status == "PAID" {
+		return c.JSON(400, model.Response{
+			Status:  400,
+			Message: "Transaction already paid, can't update",
+		})
+	}
+
+	//Check transaction status from external API
+	invoice, err := external.GetInvoice(transaction.InvoiceID)
+	if err != nil {
+		return c.JSON(500, model.Response{
+			Status:  500,
+			Message: "Failed to get invoice",
+		})
+	}
+	fmt.Println(invoice)
+	if invoice.Status == "PAID" {
+		transaction.Status = invoice.Status
+		transaction.UpdatedAt = time.Now()
+
+		updatedTransaction, err := h.transactionRepo.UpdateTransaction(userIdInt, transaction)
+		if err != nil {
+			return c.JSON(500, model.Response{
+				Status:  500,
+				Message: "Internal Server Error",
+			})
+		} else {
+			transaction = updatedTransaction
+		}
+
+		// Update rent if transaction is rent
+		if transaction.TransactionType == "Rent" {
+			// get rent transaction by transaction id
+			var rent model.Rent
+			if err := db.Where("id = ?", transaction.RentID).First(&rent).Error; err != nil {
+				return c.JSON(404, model.Response{
+					Status:  404,
+					Message: "Rent not found",
+				})
+			}
+
+			if rent.RentStatus != "PENDING" {
+				return c.JSON(400, model.Response{
+					Status:  400,
+					Message: "Rent already paid",
+				})
+			}
+
+			// update current rent status to "ACTIVE"
+			rent.RentStatus = "ACTIVE"
+
+			// get book by book id
+			var book model.Book
+			if err := db.Where("id = ?", rent.BookID).First(&book).Error; err != nil {
+				return c.JSON(404, model.Response{
+					Status:  404,
+					Message: "Book not found",
+				})
+			}
+
+			// update rent status in database
+			if err := db.Save(&rent).Error; err != nil {
+				return c.JSON(500, model.Response{
+					Status:  500,
+					Message: "Internal Server Error, Error when updating rent status",
+				})
+			}
+		}
+
+		// Update user balance if transaction is topup
+		if transaction.TransactionType == "Topup" {
+			var user model.User
+
+			if err := db.Where("id = ?", transaction.UserID).First(&user).Error; err != nil {
+				return c.JSON(404, model.Response{
+					Status:  404,
+					Message: "User not found",
+				})
+			}
+			user.Balance += transaction.Amount
+			if err := db.Save(&user).Error; err != nil {
+				return c.JSON(500, model.Response{
+					Status:  500,
+					Message: "Internal Server Error",
+				})
+			}
+		}
+
+		// return updated transaction
+		return c.JSON(200, model.Response{
+			Status:  200,
+			Message: "Success",
+			Data:    transaction,
+		})
+	} else {
+		// if invoice status is not paid, return error
+		return c.JSON(400, model.Response{
+			Status:  400,
+			Message: "Invoice is not paid",
+		})
+	}
+}
+
+// CancelTransaction godoc
+// @Summary Cancel a transaction based on the invoice status
+// @Description Get details of a specific transaction by its ID
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <access_token>"
+// @Param id path int true "Transaction ID"
+// @Param model.Transaction body model.Transaction true "Transaction object"
+// @Success 200 {object} model.Response
+// @Router /transactions/cancel-transaction/{id} [delete] // Updated the router path to use DELETE method
+func (h *transactionHandler) CancelTransaction(c echo.Context) error {
+	//get user id from context
+	userID := c.Get("user_id")
+	if userID == nil {
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			Status:  http.StatusUnauthorized,
+			Message: "User not authenticated",
+		})
+	}
+
+	userIdFloat, ok := userID.(float64)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Invalid user ID",
+		})
+	}
+	userIdInt := int(userIdFloat)
+
+	// get transaction id from url param
+	transaction_id := c.Param("id")
+
+	// get stored transaction
+	transaction := new(model.Transaction)
+
+	// Initialize the database connection
+	var db = config.DB
+	if err := db.Where("id = ?", transaction_id).First(&transaction).Error; err != nil {
+		return c.JSON(404, model.Response{
+			Status:  404,
+			Message: "Transaction not found",
+		})
+	}
+
+	//Check if transaction already paid, return already paid, no need to update
+	if transaction.Status == "PAID" {
+		return c.JSON(400, model.Response{
+			Status:  400,
+			Message: "Transaction already paid, can't update",
+		})
+	}
+
+	//Check transaction status from external API
+	invoice, err := external.GetInvoice(transaction.InvoiceID)
+	if err != nil {
+		return c.JSON(500, model.Response{
+			Status:  500,
+			Message: "Failed to get invoice",
+		})
+	}
+
+	if invoice.Status == "PAID" {
+		return c.JSON(400, model.Response{
+			Status:  400,
+			Message: "Invoice is already paid, use confirm endpoint to confirm",
+		})
+	}
+
+	transaction, err = h.transactionRepo.CancelTransaction(userIdInt, transaction.ID)
+	if err != nil {
+		return c.JSON(500, model.Response{
+			Status:  500,
+			Message: "Internal Server Error, Error when canceling transaction",
+		})
+	}
+
+	// Release the book if the transaction is a rent
+	if transaction.TransactionType == "Rent" {
+		var rent model.Rent
+		err := db.Where("id = ? AND user_id = ?", transaction.RentID, userIdInt).First(&rent).Error
+		if err != nil {
+			return c.JSON(404, model.Response{
+				Status:  404,
+				Message: "Rent not found",
+			})
+		}
+		rent.RentStatus = "CANCELED"
+
+		if err := db.Save(&rent).Error; err != nil {
+			return c.JSON(500, model.Response{
+				Status:  500,
+				Message: "Internal Server Error, Error when updating rent status",
+			})
+		}
+
+		var book model.Book
+		err = db.Where("id = ?", rent.BookID).First(&book).Error
+		if err != nil {
+			return c.JSON(404, model.Response{
+				Status:  404,
+				Message: "Book not found",
+			})
+		}
+		book.Stock += rent.Quantity
+		if book.Stock > 0 {
+			book.Available = true
+		} else {
+			book.Available = false
+		}
+
+		if err := db.Save(&book).Error; err != nil {
+			return c.JSON(500, model.Response{
+				Status:  500,
+				Message: "Internal Server Error",
+			})
+		}
+	}
+
+	return c.JSON(200, model.Response{
+		Status:  200,
+		Message: "Transaction canceled successfully",
+		Data:    transaction,
+	})
+}
+
+// GetTransactionByID godoc
+// @Summary Get Transaction details by Transaction ID
+// @Description Get details of a specific transaction by its ID
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <access_token>"
+// @Param id path int true "Transaction ID"
+// @Success 200 {object} model.Response
+// @Router /transactions/{id} [get] // Updated the router path to include transaction ID
+func (h *transactionHandler) GetTransactionByID(c echo.Context) error {
+	//get user id from context
+	userID := c.Get("user_id")
+	if userID == nil {
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			Status:  http.StatusUnauthorized,
+			Message: "User not authenticated",
+		})
+	}
+
+	userIdFloat, ok := userID.(float64)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Invalid user ID",
+		})
+	}
+	userIdInt := int(userIdFloat)
+
+	// get transaction id from url param
+	transactionID := c.Param("id")
+	fmt.Println("transactionID", transactionID)
+	if transactionID == "" {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  400,
+			Message: "Transaction ID is required",
+		})
+	}
+	transactionIDInt, err := strconv.Atoi(transactionID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Status:  400,
+			Message: "Invalid transaction ID",
+		})
+	}
+
+	// get stored transaction data
+	transaction := new(model.Transaction)
+	result, err := h.transactionRepo.GetTransactionByID(userIdInt, transactionIDInt)
+	if err != nil {
+		return c.JSON(500, model.Response{
+			Status:  500,
+			Message: "Internal Server Error, Error when getting transaction",
+		})
+	}
+
+	transaction = result
+
+	return c.JSON(200, model.Response{
+		Status:  200,
+		Message: "Success",
+		Data:    transaction,
+	})
+}

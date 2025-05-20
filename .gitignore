@@ -1,0 +1,22 @@
+# Ignore compiled binary files
+*.exe
+*.out
+*.o
+
+# Ignore Go modules
+/go.sum
+/go.mod
+
+# Ignore vendor directory
+/vendor/
+
+# Ignore test coverage files
+*.cover
+
+# Ignore IDE and editor files
+*.idea/
+*.vscode/
+*.swp
+
+# Ingnore .env files
+.env
