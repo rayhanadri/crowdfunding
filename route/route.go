@@ -20,11 +20,11 @@ func ExecRouter() {
 
 	// Initialize the repository
 	userRepo := repository.NewUserRepository(config.DB)
-	// transRepo := repository.NewTransactionRepository(config.DB)
+	transRepo := repository.NewTransactionRepository(config.DB)
 
 	// Initialize the handlers
 	userHandler := handler.NewUserHandler(userRepo)
-	// transHandler := handler.NewTransactionHandler(transRepo)
+	transHandler := handler.NewTransactionHandler(transRepo)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -58,10 +58,11 @@ func ExecRouter() {
 	// g.PUT("/donation/:id", donationHandler.UpdateCampaign)  // Update donation by ID
 
 	// Transaction routes
-	// g.POST("/transactions", transHandler.CreateTransaction, mw.CheckAuthMiddleware)     // Create a new transaction, can be topup or rent
-	// g.PUT("/transactions/:id", transHandler.UpdateTransaction, mw.CheckAuthMiddleware)  // Update transaction by ID, confirm to complete the transaction
-	// g.GET("/transactions", transHandler.GetAllTransaction, mw.CheckAuthMiddleware)      // Get all transactions for a user
-	// g.GET("/transactions/:id", transHandler.GetTransactionByID, mw.CheckAuthMiddleware) // Get transaction by ID for a user
+	g.GET("/transactions", transHandler.GetAllTransaction, mw.CheckAuthMiddleware)                       // Get all transactions for a user
+	g.GET("/transactions/:id", transHandler.GetTransactionByID, mw.CheckAuthMiddleware)                  // Get transaction by ID for a user
+	g.POST("/transactions", transHandler.CreateTransaction, mw.CheckAuthMiddleware)                      // Create a new transaction
+	g.PUT("/transactions/:id", transHandler.UpdateTransaction, mw.CheckAuthMiddleware)                   // Update transaction by ID, confirm to complete the transaction
+	g.PUT("/transactions/check-update/:id", transHandler.CheckUpdateTransaction, mw.CheckAuthMiddleware) // Check and update transaction by ID
 
 	// Start server
 	port := os.Getenv("PORT")
