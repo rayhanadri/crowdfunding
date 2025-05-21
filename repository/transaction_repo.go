@@ -32,7 +32,7 @@ func (r *transactionRepository) GetAllTransaction(user_id int) (*[]model.Transac
 		return nil, errors.New("user not found")
 	}
 
-	var transactions *[]model.Transaction
+	var transactions []model.Transaction
 	query := `
 		SELECT t.*
 		FROM transactions t
@@ -44,8 +44,8 @@ func (r *transactionRepository) GetAllTransaction(user_id int) (*[]model.Transac
 		return nil, err
 	}
 
-	for i := range *transactions {
-		transaction := &(*transactions)[i]
+	for i := range transactions {
+		transaction := &transactions[i]
 
 		// Fetch related donation
 		donation := new(model.Donation)
@@ -71,7 +71,7 @@ func (r *transactionRepository) GetAllTransaction(user_id int) (*[]model.Transac
 		transaction.Donation = *donation
 	}
 
-	return transactions, nil
+	return &transactions, nil
 }
 
 func (r *transactionRepository) CreateTransaction(user_id int, transaction *model.Transaction) (*model.Transaction, error) {
@@ -90,6 +90,12 @@ func (r *transactionRepository) CreateTransaction(user_id int, transaction *mode
 	// check if donation user_id match
 	if donation.UserID != user_id {
 		return nil, errors.New("user not authorized")
+	}
+
+	// check if donation with user and donation id already exist
+	var existingTransaction model.Transaction
+	if err := r.db.Where("user_id = ? AND donation_id = ?", user_id, transaction.DonationID).First(&existingTransaction).Error; err == nil {
+		return nil, errors.New("transaction already exists")
 	}
 
 	// get campaign from donation
@@ -202,6 +208,7 @@ func (r *transactionRepository) GetTransactionByID(user_id int, transactionID in
 	// Assign All Inner Object for json
 	campaign.User = *userCreator
 	donation.Campaign = *campaign
+	donation.User = *user
 	transaction.Donation = *donation
 
 	return transaction, nil

@@ -21,10 +21,12 @@ func ExecRouter() {
 	// Initialize the repository
 	userRepo := repository.NewUserRepository(config.DB)
 	transRepo := repository.NewTransactionRepository(config.DB)
+	donationRepo := repository.NewDonationRepository(config.DB)
 
 	// Initialize the handlers
 	userHandler := handler.NewUserHandler(userRepo)
 	transHandler := handler.NewTransactionHandler(transRepo)
+	donationHandler := handler.NewDonationHandler(donationRepo)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -52,10 +54,10 @@ func ExecRouter() {
 	// g.PUT("/campaign/:id", campaignHandler.UpdateCampaign)  // Update campaign by ID
 
 	// Donation routes
-	// g.GET("/donation", donationHandler.GetAllCampaign)      // Get all donations
-	// g.GET("/donation/:id", donationHandler.GetCampaignById) // Get donation by ID
-	// g.POST("/donation/:id", donationHandler.CreateCampaign) // Create donation
-	// g.PUT("/donation/:id", donationHandler.UpdateCampaign)  // Update donation by ID
+	g.GET("/donations", donationHandler.GetAllDonations)     // Get all donations
+	g.GET("/donations/:id", donationHandler.GetDonationByID) // Get donation by ID
+	g.POST("/donations", donationHandler.CreateDonation)     // Create donation
+	g.PUT("/donations/:id", donationHandler.UpdateDonation)  // Update donation by ID
 
 	// Transaction routes
 	g.GET("/transactions", transHandler.GetAllTransaction, mw.CheckAuthMiddleware)                       // Get all transactions for a user

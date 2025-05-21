@@ -9,6 +9,132 @@
     "host": "localhost:8080",
     "basePath": "/api/v1/",
     "paths": {
+        "/donations": {
+            "post": {
+                "description": "Create a new donation for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "donations"
+                ],
+                "summary": "Create a new donation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003caccess_token\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Donation object",
+                        "name": "model.Donation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Donation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/donations/{id}": {
+            "get": {
+                "description": "Get details of a specific donation by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "donations"
+                ],
+                "summary": "Get Donation details by Donation ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003caccess_token\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Donation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Get details of a specific donation by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "donations"
+                ],
+                "summary": "Update a donation based on the invoice status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003caccess_token\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Donation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Donation object",
+                        "name": "model.Donation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Donation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/transactions": {
             "post": {
                 "description": "Create a new transaction for a user",

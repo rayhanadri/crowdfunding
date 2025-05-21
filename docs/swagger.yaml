@@ -123,6 +123,90 @@ info:
   title: Crowdfunding API
   version: "1.0"
 paths:
+  /donations:
+    post:
+      consumes:
+      - application/json
+      description: Create a new donation for a user
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Donation object
+        in: body
+        name: model.Donation
+        required: true
+        schema:
+          $ref: '#/definitions/model.Donation'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create a new donation
+      tags:
+      - donations
+  /donations/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific donation by its ID
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Donation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get Donation details by Donation ID
+      tags:
+      - donations
+    put:
+      consumes:
+      - application/json
+      description: Get details of a specific donation by its ID
+      parameters:
+      - description: Bearer <access_token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Donation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Donation object
+        in: body
+        name: model.Donation
+        required: true
+        schema:
+          $ref: '#/definitions/model.Donation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Update a donation based on the invoice status
+      tags:
+      - donations
   /transactions:
     post:
       consumes:
