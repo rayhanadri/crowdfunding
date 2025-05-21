@@ -104,6 +104,11 @@ func (r *donationRepository) CreateDonation(user_id int, donation *model.Donatio
 		return nil, errors.New("campaign not found")
 	}
 
+	// chec if campaign ACTIVE
+	if campaign.Status != "ACTIVE" {
+		return nil, errors.New("campaign not active")
+	}
+
 	// get campaign creator user
 	userCreator := new(model.User)
 	if err := r.db.Where("id = ?", campaign.UserID).First(&userCreator).Error; err != nil {
