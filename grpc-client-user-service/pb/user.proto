@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/pb";
+
+service UserService {
+  rpc GetUserByID(UserIdRequest) returns (UserResponse);
+  rpc CreateUser(UserRequest) returns (UserResponse);
+  rpc UpdateUser(UserRequest) returns (UserResponse);
+  rpc LoginUser(UserLoginRequest) returns (UserResponse);
+}
+
+message UserIdRequest {
+  string id = 1;
+}
+
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+
+message UserRequest {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message UserResponse {
+  string message = 1;
+  string error = 2;
+  int32 id = 3;
+  string name = 4;
+  string email = 5;
+  string password = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
