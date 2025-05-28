@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/joho/godotenv v1.5.1
+	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250528095903-89a6c791dd4f
 	google.golang.org/grpc v1.72.2
 	google.golang.org/protobuf v1.36.6
 	gorm.io/driver/postgres v1.6.0
@@ -17,7 +18,6 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250528095903-89a6c791dd4f // indirect
 	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sync v0.14.0 // indirect

@@ -21,7 +21,7 @@ type DonationService struct {
 	pb.UnimplementedDonationServiceServer
 }
 
-func GetUserByID(userID int32) (userModel *user_model.User, error error) {
+func GetUserByID(userId int32) (userModel *user_model.User, error error) {
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
@@ -34,7 +34,7 @@ func GetUserByID(userID int32) (userModel *user_model.User, error error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	// Create a request
-	req := &user_pb.UserIdRequest{Id: userID}
+	req := &user_pb.UserIdRequest{Id: userId}
 	// Call the GetUserByID method
 	res, err := client.GetUserByID(ctx, req)
 	if err != nil {
