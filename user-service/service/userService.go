@@ -2,15 +2,14 @@ package service
 
 import (
 	"context"
-
-	"user-service/config"
-	"user-service/model"
-	"user-service/pb"
+	"errors"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
-	"errors"
-	"time"
+	"github.com/rayhanadri/crowdfunding/user-service/config"
+	"github.com/rayhanadri/crowdfunding/user-service/model"
+	"github.com/rayhanadri/crowdfunding/user-service/pb"
 )
 
 type UserService struct {

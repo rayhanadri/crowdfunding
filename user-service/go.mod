@@ -1,4 +1,4 @@
-module user-service
+module github.com/rayhanadri/crowdfunding/user-service
 
 go 1.23.3
 

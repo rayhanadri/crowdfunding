@@ -5,12 +5,12 @@ import (
 	"log"
 	"net"
 
-	"user-service/config"
-	"user-service/pb"
-	"user-service/service"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/rayhanadri/crowdfunding/user-service/config"
+	"github.com/rayhanadri/crowdfunding/user-service/pb"
+	"github.com/rayhanadri/crowdfunding/user-service/service"
 )
 
 func main() {
