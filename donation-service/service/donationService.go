@@ -13,8 +13,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/rayhanadri/crowdfunding/donation-service/config" // corrected the import path
-	"github.com/rayhanadri/crowdfunding/donation-service/model"  // corrected the import path
-	"github.com/rayhanadri/crowdfunding/donation-service/pb"     // corrected the import path
+	"github.com/rayhanadri/crowdfunding/donation-service/external"
+	"github.com/rayhanadri/crowdfunding/donation-service/model" // corrected the import path
+	"github.com/rayhanadri/crowdfunding/donation-service/pb"    // corrected the import path
 )
 
 type DonationService struct {
@@ -289,7 +290,7 @@ func (r *DonationService) CreateTransaction(ctx context.Context, req *pb.Transac
 		Status:             "",
 	}
 
-	//validate user data
+	//validate transaction data
 	if transaction.DonationID == 0 || transaction.Amount <= 0 {
 		err := errors.New("donation ID and amount are required")
 		response := &pb.TransactionResponse{
@@ -299,6 +300,48 @@ func (r *DonationService) CreateTransaction(ctx context.Context, req *pb.Transac
 
 		return response, err
 	}
+
+	// Get User ID from Donation ID
+	donation, err := s.GetDonationByID(ctx, &pb.DonationIdRequest{Id: int32(transaction.DonationID)})
+	if err != nil {
+		response := &pb.TransactionResponse{
+			Message: "Failed to get donation",
+			Error:   err.Error(),
+		}
+		return response, err
+	}
+
+	donationUserID := donation.GetUserId()
+
+	// Get User details
+	userModel, err := GetUserByID(donationUserID)
+	if err != nil {
+		response := &pb.TransactionResponse{
+			Message: "Failed to get user",
+			Error:   err.Error(),
+		}
+		return response, err
+	}
+
+	// Create an invoice using the external service
+	invoice, err := external.CreateInvoice(
+		fmt.Sprintf("donation-%d", transaction.DonationID),
+		int(transaction.Amount),
+		userModel.Email,
+		fmt.Sprintf("Donation for campaign %d by %s", transaction.DonationID, userModel.Name),
+	)
+	if err != nil {
+		response := &pb.TransactionResponse{
+			Message: "Failed to create invoice",
+			Error:   err.Error(),
+		}
+		return response, err
+	}
+
+	transaction.InvoiceID = invoice.ID
+	transaction.InvoiceURL = invoice.InvoiceURL
+	transaction.InvoiceDescription = invoice.Description
+	transaction.Status = invoice.Status
 
 	if err := config.DB.Omit("id").Create(transaction).Error; err != nil {
 		response := &pb.TransactionResponse{
