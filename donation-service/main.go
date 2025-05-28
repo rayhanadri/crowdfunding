@@ -22,8 +22,8 @@ func main() {
 	// Create a new gRPC server
 	grpcServer := grpc.NewServer()
 
-	// Register the UserService with the gRPC server
-	pb.RegisterUserServiceServer(grpcServer, &service.UserService{})
+	// Register the DonationService with the gRPC server
+	pb.RegisterDonationServiceServer(grpcServer, &service.DonationService{})
 
 	// Register reflection service on gRPC server
 	reflection.Register(grpcServer)
