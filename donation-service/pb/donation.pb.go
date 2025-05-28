@@ -151,14 +151,16 @@ func (x *DonationRequest) GetStatus() string {
 
 type DonationResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	CampaignId    int32                  `protobuf:"varint,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Amount        float32                `protobuf:"fixed32,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	Message       string                 `protobuf:"bytes,5,opt,name=message,proto3" json:"message,omitempty"`
-	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,7,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,8,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	Id            int32                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CampaignId    int32                  `protobuf:"varint,5,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Amount        float32                `protobuf:"fixed32,6,opt,name=amount,proto3" json:"amount,omitempty"`
+	MessageText   string                 `protobuf:"bytes,7,opt,name=message_text,json=messageText,proto3" json:"message_text,omitempty"`
+	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,9,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,10,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -193,6 +195,20 @@ func (*DonationResponse) Descriptor() ([]byte, []int) {
 	return file_pb_donation_proto_rawDescGZIP(), []int{2}
 }
 
+func (x *DonationResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *DonationResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 func (x *DonationResponse) GetId() int32 {
 	if x != nil {
 		return x.Id
@@ -221,9 +237,9 @@ func (x *DonationResponse) GetAmount() float32 {
 	return 0
 }
 
-func (x *DonationResponse) GetMessage() string {
+func (x *DonationResponse) GetMessageText() string {
 	if x != nil {
-		return x.Message
+		return x.MessageText
 	}
 	return ""
 }
@@ -443,17 +459,20 @@ const file_pb_donation_proto_rawDesc = "" +
 	"campaignId\x12\x16\n" +
 	"\x06amount\x18\x04 \x01(\x02R\x06amount\x12\x18\n" +
 	"\amessage\x18\x05 \x01(\tR\amessage\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\tR\x06status\"\xe2\x01\n" +
-	"\x10DonationResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1f\n" +
-	"\vcampaign_id\x18\x03 \x01(\x05R\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\"\x9b\x02\n" +
+	"\x10DonationResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x14\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\x12\x0e\n" +
+	"\x02id\x18\x03 \x01(\x05R\x02id\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x05R\x06userId\x12\x1f\n" +
+	"\vcampaign_id\x18\x05 \x01(\x05R\n" +
 	"campaignId\x12\x16\n" +
-	"\x06amount\x18\x04 \x01(\x02R\x06amount\x12\x18\n" +
-	"\amessage\x18\x05 \x01(\tR\amessage\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\tR\x06status\x12\x1c\n" +
-	"\tcreatedAt\x18\a \x01(\tR\tcreatedAt\x12\x1c\n" +
-	"\tupdatedAt\x18\b \x01(\tR\tupdatedAt\"\xda\x01\n" +
+	"\x06amount\x18\x06 \x01(\x02R\x06amount\x12!\n" +
+	"\fmessage_text\x18\a \x01(\tR\vmessageText\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\x12\x1c\n" +
+	"\tcreatedAt\x18\t \x01(\tR\tcreatedAt\x12\x1c\n" +
+	"\tupdatedAt\x18\n" +
+	" \x01(\tR\tupdatedAt\"\xda\x01\n" +
 	"\bDonation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1f\n" +

@@ -12,7 +12,7 @@ service UserService {
 }
 
 message UserIdRequest {
-  string id = 1;
+  int32 id = 1;
 }
 
 message UserLoginRequest {
