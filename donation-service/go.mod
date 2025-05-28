@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/joho/godotenv v1.5.1
-	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250528095903-89a6c791dd4f
+	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250528103045-75de00168ab7
 	google.golang.org/grpc v1.72.2
 	google.golang.org/protobuf v1.36.6
 	gorm.io/driver/postgres v1.6.0

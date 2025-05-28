@@ -42,15 +42,25 @@ func GetUserByID(userId int32) (userModel *user_model.User, error error) {
 		return nil, err
 	}
 
-	userModel = user_model.User{
+	createdAt, err := time.Parse(time.RFC3339, res.GetCreatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("error parsing CreatedAt: %v", err)
+	}
+
+	updatedAt, err := time.Parse(time.RFC3339, res.GetUpdatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("error parsing UpdatedAt: %v", err)
+	}
+
+	userModel = &user_model.User{
 		ID:        int(res.GetId()),
 		Name:      res.GetName(),
 		Email:     res.GetEmail(),
 		Password:  res.GetPassword(),
-		CreatedAt: res.GetCreatedAt(),
-		UpdatedAt: res.GetUpdatedAt(),
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
 	}
-	return &userModel, nil
+	return userModel, nil
 }
 
 func (s *DonationService) GetDonationByID(ctx context.Context, req *pb.DonationIdRequest) (*pb.DonationResponse, error) {
