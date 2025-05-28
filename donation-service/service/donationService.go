@@ -7,9 +7,9 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"donation-service/config"
-	"donation-service/model"
-	"donation-service/pb"
+	"github.com/rayhanadri/crowdfunding/donation-service/config" // corrected the import path
+	"github.com/rayhanadri/crowdfunding/donation-service/model" // corrected the import path
+	"github.com/rayhanadri/crowdfunding/donation-service/pb" // corrected the import path
 
 )
 

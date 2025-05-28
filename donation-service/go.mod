@@ -1,6 +1,6 @@
 module github.com/rayhanadri/crowdfunding/donation-service
 
-go 1.24.0
+go 1.24.2
 
 require (
 	github.com/jackc/pgx/v5 v5.7.5
@@ -10,7 +10,6 @@ require (
 	google.golang.org/protobuf v1.36.6
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.30.0
-	github.com/rayhanadri/crowdfunding/user-service v0.0.0 // added user-service module
 )
 
 require (
