@@ -66,7 +66,12 @@ message TransactionIdRequest {
 message TransactionRequest {
   int32 id = 1;
   int32 donation_id = 2;
-  float amount = 4;
+  string invoice_id = 3;
+  string invoice_url = 4;
+  string invoice_description = 5;
+  string payment_method = 6;
+  float amount = 7;
+  string status = 8;
 }
 
 message TransactionResponse {
@@ -76,11 +81,12 @@ message TransactionResponse {
   int32 donation_id = 4;
   string invoice_id = 5;
   string invoice_url = 6;
-  string payment_method = 7;
-  string amount = 8;
-  string status = 9;
-  string created_at = 10;
-  string updated_at = 11;
+  string invoice_description = 7;
+  string payment_method = 8;
+  float amount = 9;
+  string status = 10;
+  string created_at = 11;
+  string updated_at = 12;
 }
 
 message Transaction {
@@ -88,11 +94,12 @@ message Transaction {
   int32 donation_id = 2;
   string invoice_id = 3;
   string invoice_url = 4;
-  string payment_method = 5;
-  string amount = 6;
-  string status = 7;
-  string created_at = 8;
-  string updated_at = 9;
+  string invoice_description = 5;
+  string payment_method = 6;
+  float amount = 7;
+  string status = 8;
+  string created_at = 9;
+  string updated_at = 10;
 }
 
 message GetTransactionRequest {}

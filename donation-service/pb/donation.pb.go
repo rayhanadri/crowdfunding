@@ -490,12 +490,17 @@ func (x *TransactionIdRequest) GetId() int32 {
 }
 
 type TransactionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DonationId    int32                  `protobuf:"varint,2,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
-	Amount        float32                `protobuf:"fixed32,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DonationId         int32                  `protobuf:"varint,2,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
+	InvoiceId          string                 `protobuf:"bytes,3,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
+	InvoiceUrl         string                 `protobuf:"bytes,4,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
+	InvoiceDescription string                 `protobuf:"bytes,5,opt,name=invoice_description,json=invoiceDescription,proto3" json:"invoice_description,omitempty"`
+	PaymentMethod      string                 `protobuf:"bytes,6,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Amount             float32                `protobuf:"fixed32,7,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status             string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *TransactionRequest) Reset() {
@@ -542,6 +547,34 @@ func (x *TransactionRequest) GetDonationId() int32 {
 	return 0
 }
 
+func (x *TransactionRequest) GetInvoiceId() string {
+	if x != nil {
+		return x.InvoiceId
+	}
+	return ""
+}
+
+func (x *TransactionRequest) GetInvoiceUrl() string {
+	if x != nil {
+		return x.InvoiceUrl
+	}
+	return ""
+}
+
+func (x *TransactionRequest) GetInvoiceDescription() string {
+	if x != nil {
+		return x.InvoiceDescription
+	}
+	return ""
+}
+
+func (x *TransactionRequest) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
 func (x *TransactionRequest) GetAmount() float32 {
 	if x != nil {
 		return x.Amount
@@ -549,21 +582,29 @@ func (x *TransactionRequest) GetAmount() float32 {
 	return 0
 }
 
+func (x *TransactionRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
 type TransactionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
-	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
-	Id            int32                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
-	DonationId    int32                  `protobuf:"varint,4,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
-	InvoiceId     string                 `protobuf:"bytes,5,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
-	InvoiceUrl    string                 `protobuf:"bytes,6,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
-	PaymentMethod string                 `protobuf:"bytes,7,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
-	Amount        string                 `protobuf:"bytes,8,opt,name=amount,proto3" json:"amount,omitempty"`
-	Status        string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Message            string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Error              string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	Id                 int32                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	DonationId         int32                  `protobuf:"varint,4,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
+	InvoiceId          string                 `protobuf:"bytes,5,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
+	InvoiceUrl         string                 `protobuf:"bytes,6,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
+	InvoiceDescription string                 `protobuf:"bytes,7,opt,name=invoice_description,json=invoiceDescription,proto3" json:"invoice_description,omitempty"`
+	PaymentMethod      string                 `protobuf:"bytes,8,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Amount             float32                `protobuf:"fixed32,9,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status             string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *TransactionResponse) Reset() {
@@ -638,6 +679,13 @@ func (x *TransactionResponse) GetInvoiceUrl() string {
 	return ""
 }
 
+func (x *TransactionResponse) GetInvoiceDescription() string {
+	if x != nil {
+		return x.InvoiceDescription
+	}
+	return ""
+}
+
 func (x *TransactionResponse) GetPaymentMethod() string {
 	if x != nil {
 		return x.PaymentMethod
@@ -645,11 +693,11 @@ func (x *TransactionResponse) GetPaymentMethod() string {
 	return ""
 }
 
-func (x *TransactionResponse) GetAmount() string {
+func (x *TransactionResponse) GetAmount() float32 {
 	if x != nil {
 		return x.Amount
 	}
-	return ""
+	return 0
 }
 
 func (x *TransactionResponse) GetStatus() string {
@@ -674,18 +722,19 @@ func (x *TransactionResponse) GetUpdatedAt() string {
 }
 
 type Transaction struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DonationId    int32                  `protobuf:"varint,2,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
-	InvoiceId     string                 `protobuf:"bytes,3,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
-	InvoiceUrl    string                 `protobuf:"bytes,4,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
-	PaymentMethod string                 `protobuf:"bytes,5,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
-	Amount        string                 `protobuf:"bytes,6,opt,name=amount,proto3" json:"amount,omitempty"`
-	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DonationId         int32                  `protobuf:"varint,2,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
+	InvoiceId          string                 `protobuf:"bytes,3,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
+	InvoiceUrl         string                 `protobuf:"bytes,4,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
+	InvoiceDescription string                 `protobuf:"bytes,5,opt,name=invoice_description,json=invoiceDescription,proto3" json:"invoice_description,omitempty"`
+	PaymentMethod      string                 `protobuf:"bytes,6,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Amount             float32                `protobuf:"fixed32,7,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status             string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Transaction) Reset() {
@@ -746,6 +795,13 @@ func (x *Transaction) GetInvoiceUrl() string {
 	return ""
 }
 
+func (x *Transaction) GetInvoiceDescription() string {
+	if x != nil {
+		return x.InvoiceDescription
+	}
+	return ""
+}
+
 func (x *Transaction) GetPaymentMethod() string {
 	if x != nil {
 		return x.PaymentMethod
@@ -753,11 +809,11 @@ func (x *Transaction) GetPaymentMethod() string {
 	return ""
 }
 
-func (x *Transaction) GetAmount() string {
+func (x *Transaction) GetAmount() float32 {
 	if x != nil {
 		return x.Amount
 	}
-	return ""
+	return 0
 }
 
 func (x *Transaction) GetStatus() string {
@@ -903,12 +959,19 @@ const file_pb_donation_proto_rawDesc = "" +
 	"\x14GetDonationsResponse\x120\n" +
 	"\tdonations\x18\x01 \x03(\v2\x12.donation.DonationR\tdonations\"&\n" +
 	"\x14TransactionIdRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\"]\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"\x8d\x02\n" +
 	"\x12TransactionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1f\n" +
 	"\vdonation_id\x18\x02 \x01(\x05R\n" +
-	"donationId\x12\x16\n" +
-	"\x06amount\x18\x04 \x01(\x02R\x06amount\"\xcb\x02\n" +
+	"donationId\x12\x1d\n" +
+	"\n" +
+	"invoice_id\x18\x03 \x01(\tR\tinvoiceId\x12\x1f\n" +
+	"\vinvoice_url\x18\x04 \x01(\tR\n" +
+	"invoiceUrl\x12/\n" +
+	"\x13invoice_description\x18\x05 \x01(\tR\x12invoiceDescription\x12%\n" +
+	"\x0epayment_method\x18\x06 \x01(\tR\rpaymentMethod\x12\x16\n" +
+	"\x06amount\x18\a \x01(\x02R\x06amount\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\"\xfc\x02\n" +
 	"\x13TransactionResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x14\n" +
 	"\x05error\x18\x02 \x01(\tR\x05error\x12\x0e\n" +
@@ -918,15 +981,16 @@ const file_pb_donation_proto_rawDesc = "" +
 	"\n" +
 	"invoice_id\x18\x05 \x01(\tR\tinvoiceId\x12\x1f\n" +
 	"\vinvoice_url\x18\x06 \x01(\tR\n" +
-	"invoiceUrl\x12%\n" +
-	"\x0epayment_method\x18\a \x01(\tR\rpaymentMethod\x12\x16\n" +
-	"\x06amount\x18\b \x01(\tR\x06amount\x12\x16\n" +
-	"\x06status\x18\t \x01(\tR\x06status\x12\x1d\n" +
+	"invoiceUrl\x12/\n" +
+	"\x13invoice_description\x18\a \x01(\tR\x12invoiceDescription\x12%\n" +
+	"\x0epayment_method\x18\b \x01(\tR\rpaymentMethod\x12\x16\n" +
+	"\x06amount\x18\t \x01(\x02R\x06amount\x12\x16\n" +
+	"\x06status\x18\n" +
+	" \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\n" +
-	" \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\v \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAt\"\x93\x02\n" +
+	"updated_at\x18\f \x01(\tR\tupdatedAt\"\xc4\x02\n" +
 	"\vTransaction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1f\n" +
 	"\vdonation_id\x18\x02 \x01(\x05R\n" +
@@ -934,14 +998,16 @@ const file_pb_donation_proto_rawDesc = "" +
 	"\n" +
 	"invoice_id\x18\x03 \x01(\tR\tinvoiceId\x12\x1f\n" +
 	"\vinvoice_url\x18\x04 \x01(\tR\n" +
-	"invoiceUrl\x12%\n" +
-	"\x0epayment_method\x18\x05 \x01(\tR\rpaymentMethod\x12\x16\n" +
-	"\x06amount\x18\x06 \x01(\tR\x06amount\x12\x16\n" +
-	"\x06status\x18\a \x01(\tR\x06status\x12\x1d\n" +
+	"invoiceUrl\x12/\n" +
+	"\x13invoice_description\x18\x05 \x01(\tR\x12invoiceDescription\x12%\n" +
+	"\x0epayment_method\x18\x06 \x01(\tR\rpaymentMethod\x12\x16\n" +
+	"\x06amount\x18\a \x01(\x02R\x06amount\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\tR\tupdatedAt\"\x17\n" +
+	"updated_at\x18\n" +
+	" \x01(\tR\tupdatedAt\"\x17\n" +
 	"\x15GetTransactionRequest\"S\n" +
 	"\x16GetTransactionResponse\x129\n" +
 	"\ftransactions\x18\x01 \x03(\v2\x15.donation.TransactionR\ftransactions2\x94\x05\n" +
