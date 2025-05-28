@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package donation;
+
+option go_package = "/pb";
+
+service DonationService {
+  rpc GetDonationByID(DonationIdRequest) returns (DonationResponse);
+  rpc GetAllDonations(GetDonationsRequest) returns (GetDonationsResponse);
+  rpc CreateDonation(DonationRequest) returns (DonationResponse);
+  rpc UpdateDonation(DonationRequest) returns (DonationResponse);
+}
+
+message DonationIdRequest {
+  string id = 1;
+}
+
+message DonationRequest {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 campaign_id = 3;
+  float amount = 4;
+  string message = 5;
+  string status = 6;
+}
+
+
+message DonationResponse {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 campaign_id = 3;
+  float amount = 4;
+  string message = 5;
+  string status = 6;
+  string createdAt = 7;
+  string updatedAt = 8;}
+
+message Donation {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 campaign_id = 3;
+  float amount = 4;
+  string message = 5;
+  string status = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message GetDonationsRequest {}
+
+message GetDonationsResponse {
+  repeated Donation donations = 1;
+}
