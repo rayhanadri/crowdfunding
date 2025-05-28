@@ -9,10 +9,15 @@ service DonationService {
   rpc GetAllDonations(GetDonationsRequest) returns (GetDonationsResponse);
   rpc CreateDonation(DonationRequest) returns (DonationResponse);
   rpc UpdateDonation(DonationRequest) returns (DonationResponse);
+
+  rpc GetTransactionByID(TransactionIdRequest) returns (TransactionResponse);
+  rpc GetAllTransactionss(GetTransactionRequest) returns (GetTransactionResponse);
+  rpc CreateTransaction(TransactionRequest) returns (TransactionResponse);
+  rpc UpdateTransaction(TransactionRequest) returns (TransactionResponse);
 }
 
 message DonationIdRequest {
-  string id = 1;
+  int32 id = 1;
 }
 
 message DonationRequest {
@@ -52,4 +57,46 @@ message GetDonationsRequest {}
 
 message GetDonationsResponse {
   repeated Donation donations = 1;
+}
+
+message TransactionIdRequest {
+  int32 id = 1;
+}
+
+message TransactionRequest {
+  int32 id = 1;
+  int32 donation_id = 2;
+  float amount = 4;
+}
+
+message TransactionResponse {
+  string message = 1;
+  string error = 2;
+  int32 id = 3;
+  int32 donation_id = 4;
+  string invoice_id = 5;
+  string invoice_url = 6;
+  string payment_method = 7;
+  string amount = 8;
+  string status = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message Transaction {
+  int32 id = 1;
+  int32 donation_id = 2;
+  string invoice_id = 3;
+  string invoice_url = 4;
+  string payment_method = 5;
+  string amount = 6;
+  string status = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+message GetTransactionRequest {}
+
+message GetTransactionResponse {
+  repeated Transaction transactions = 1;
 }

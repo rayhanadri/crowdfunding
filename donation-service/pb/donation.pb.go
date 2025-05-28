@@ -23,7 +23,7 @@ const (
 
 type DonationIdRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,11 +58,11 @@ func (*DonationIdRequest) Descriptor() ([]byte, []int) {
 	return file_pb_donation_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *DonationIdRequest) GetId() string {
+func (x *DonationIdRequest) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
-	return ""
+	return 0
 }
 
 type DonationRequest struct {
@@ -445,13 +445,429 @@ func (x *GetDonationsResponse) GetDonations() []*Donation {
 	return nil
 }
 
+type TransactionIdRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransactionIdRequest) Reset() {
+	*x = TransactionIdRequest{}
+	mi := &file_pb_donation_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransactionIdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransactionIdRequest) ProtoMessage() {}
+
+func (x *TransactionIdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_donation_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransactionIdRequest.ProtoReflect.Descriptor instead.
+func (*TransactionIdRequest) Descriptor() ([]byte, []int) {
+	return file_pb_donation_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TransactionIdRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type TransactionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DonationId    int32                  `protobuf:"varint,2,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
+	Amount        float32                `protobuf:"fixed32,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransactionRequest) Reset() {
+	*x = TransactionRequest{}
+	mi := &file_pb_donation_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransactionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransactionRequest) ProtoMessage() {}
+
+func (x *TransactionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_donation_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransactionRequest.ProtoReflect.Descriptor instead.
+func (*TransactionRequest) Descriptor() ([]byte, []int) {
+	return file_pb_donation_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *TransactionRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *TransactionRequest) GetDonationId() int32 {
+	if x != nil {
+		return x.DonationId
+	}
+	return 0
+}
+
+func (x *TransactionRequest) GetAmount() float32 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type TransactionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	Id            int32                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	DonationId    int32                  `protobuf:"varint,4,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
+	InvoiceId     string                 `protobuf:"bytes,5,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
+	InvoiceUrl    string                 `protobuf:"bytes,6,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
+	PaymentMethod string                 `protobuf:"bytes,7,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Amount        string                 `protobuf:"bytes,8,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status        string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransactionResponse) Reset() {
+	*x = TransactionResponse{}
+	mi := &file_pb_donation_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransactionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransactionResponse) ProtoMessage() {}
+
+func (x *TransactionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_donation_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransactionResponse.ProtoReflect.Descriptor instead.
+func (*TransactionResponse) Descriptor() ([]byte, []int) {
+	return file_pb_donation_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *TransactionResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *TransactionResponse) GetDonationId() int32 {
+	if x != nil {
+		return x.DonationId
+	}
+	return 0
+}
+
+func (x *TransactionResponse) GetInvoiceId() string {
+	if x != nil {
+		return x.InvoiceId
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetInvoiceUrl() string {
+	if x != nil {
+		return x.InvoiceUrl
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetAmount() string {
+	if x != nil {
+		return x.Amount
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *TransactionResponse) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type Transaction struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DonationId    int32                  `protobuf:"varint,2,opt,name=donation_id,json=donationId,proto3" json:"donation_id,omitempty"`
+	InvoiceId     string                 `protobuf:"bytes,3,opt,name=invoice_id,json=invoiceId,proto3" json:"invoice_id,omitempty"`
+	InvoiceUrl    string                 `protobuf:"bytes,4,opt,name=invoice_url,json=invoiceUrl,proto3" json:"invoice_url,omitempty"`
+	PaymentMethod string                 `protobuf:"bytes,5,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Amount        string                 `protobuf:"bytes,6,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Transaction) Reset() {
+	*x = Transaction{}
+	mi := &file_pb_donation_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Transaction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Transaction) ProtoMessage() {}
+
+func (x *Transaction) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_donation_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Transaction.ProtoReflect.Descriptor instead.
+func (*Transaction) Descriptor() ([]byte, []int) {
+	return file_pb_donation_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *Transaction) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Transaction) GetDonationId() int32 {
+	if x != nil {
+		return x.DonationId
+	}
+	return 0
+}
+
+func (x *Transaction) GetInvoiceId() string {
+	if x != nil {
+		return x.InvoiceId
+	}
+	return ""
+}
+
+func (x *Transaction) GetInvoiceUrl() string {
+	if x != nil {
+		return x.InvoiceUrl
+	}
+	return ""
+}
+
+func (x *Transaction) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *Transaction) GetAmount() string {
+	if x != nil {
+		return x.Amount
+	}
+	return ""
+}
+
+func (x *Transaction) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *Transaction) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *Transaction) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type GetTransactionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTransactionRequest) Reset() {
+	*x = GetTransactionRequest{}
+	mi := &file_pb_donation_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTransactionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTransactionRequest) ProtoMessage() {}
+
+func (x *GetTransactionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_donation_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTransactionRequest.ProtoReflect.Descriptor instead.
+func (*GetTransactionRequest) Descriptor() ([]byte, []int) {
+	return file_pb_donation_proto_rawDescGZIP(), []int{10}
+}
+
+type GetTransactionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Transactions  []*Transaction         `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTransactionResponse) Reset() {
+	*x = GetTransactionResponse{}
+	mi := &file_pb_donation_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTransactionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTransactionResponse) ProtoMessage() {}
+
+func (x *GetTransactionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_donation_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTransactionResponse.ProtoReflect.Descriptor instead.
+func (*GetTransactionResponse) Descriptor() ([]byte, []int) {
+	return file_pb_donation_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetTransactionResponse) GetTransactions() []*Transaction {
+	if x != nil {
+		return x.Transactions
+	}
+	return nil
+}
+
 var File_pb_donation_proto protoreflect.FileDescriptor
 
 const file_pb_donation_proto_rawDesc = "" +
 	"\n" +
 	"\x11pb/donation.proto\x12\bdonation\"#\n" +
 	"\x11DonationIdRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xa5\x01\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"\xa5\x01\n" +
 	"\x0fDonationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1f\n" +
@@ -485,12 +901,59 @@ const file_pb_donation_proto_rawDesc = "" +
 	"\tupdatedAt\x18\b \x01(\tR\tupdatedAt\"\x15\n" +
 	"\x13GetDonationsRequest\"H\n" +
 	"\x14GetDonationsResponse\x120\n" +
-	"\tdonations\x18\x01 \x03(\v2\x12.donation.DonationR\tdonations2\xc1\x02\n" +
+	"\tdonations\x18\x01 \x03(\v2\x12.donation.DonationR\tdonations\"&\n" +
+	"\x14TransactionIdRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"]\n" +
+	"\x12TransactionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1f\n" +
+	"\vdonation_id\x18\x02 \x01(\x05R\n" +
+	"donationId\x12\x16\n" +
+	"\x06amount\x18\x04 \x01(\x02R\x06amount\"\xcb\x02\n" +
+	"\x13TransactionResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x14\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\x12\x0e\n" +
+	"\x02id\x18\x03 \x01(\x05R\x02id\x12\x1f\n" +
+	"\vdonation_id\x18\x04 \x01(\x05R\n" +
+	"donationId\x12\x1d\n" +
+	"\n" +
+	"invoice_id\x18\x05 \x01(\tR\tinvoiceId\x12\x1f\n" +
+	"\vinvoice_url\x18\x06 \x01(\tR\n" +
+	"invoiceUrl\x12%\n" +
+	"\x0epayment_method\x18\a \x01(\tR\rpaymentMethod\x12\x16\n" +
+	"\x06amount\x18\b \x01(\tR\x06amount\x12\x16\n" +
+	"\x06status\x18\t \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\"\x93\x02\n" +
+	"\vTransaction\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1f\n" +
+	"\vdonation_id\x18\x02 \x01(\x05R\n" +
+	"donationId\x12\x1d\n" +
+	"\n" +
+	"invoice_id\x18\x03 \x01(\tR\tinvoiceId\x12\x1f\n" +
+	"\vinvoice_url\x18\x04 \x01(\tR\n" +
+	"invoiceUrl\x12%\n" +
+	"\x0epayment_method\x18\x05 \x01(\tR\rpaymentMethod\x12\x16\n" +
+	"\x06amount\x18\x06 \x01(\tR\x06amount\x12\x16\n" +
+	"\x06status\x18\a \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\t \x01(\tR\tupdatedAt\"\x17\n" +
+	"\x15GetTransactionRequest\"S\n" +
+	"\x16GetTransactionResponse\x129\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x15.donation.TransactionR\ftransactions2\x94\x05\n" +
 	"\x0fDonationService\x12J\n" +
 	"\x0fGetDonationByID\x12\x1b.donation.DonationIdRequest\x1a\x1a.donation.DonationResponse\x12P\n" +
 	"\x0fGetAllDonations\x12\x1d.donation.GetDonationsRequest\x1a\x1e.donation.GetDonationsResponse\x12G\n" +
 	"\x0eCreateDonation\x12\x19.donation.DonationRequest\x1a\x1a.donation.DonationResponse\x12G\n" +
-	"\x0eUpdateDonation\x12\x19.donation.DonationRequest\x1a\x1a.donation.DonationResponseB\x05Z\x03/pbb\x06proto3"
+	"\x0eUpdateDonation\x12\x19.donation.DonationRequest\x1a\x1a.donation.DonationResponse\x12S\n" +
+	"\x12GetTransactionByID\x12\x1e.donation.TransactionIdRequest\x1a\x1d.donation.TransactionResponse\x12X\n" +
+	"\x13GetAllTransactionss\x12\x1f.donation.GetTransactionRequest\x1a .donation.GetTransactionResponse\x12P\n" +
+	"\x11CreateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponse\x12P\n" +
+	"\x11UpdateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponseB\x05Z\x03/pbb\x06proto3"
 
 var (
 	file_pb_donation_proto_rawDescOnce sync.Once
@@ -504,30 +967,45 @@ func file_pb_donation_proto_rawDescGZIP() []byte {
 	return file_pb_donation_proto_rawDescData
 }
 
-var file_pb_donation_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_pb_donation_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_pb_donation_proto_goTypes = []any{
-	(*DonationIdRequest)(nil),    // 0: donation.DonationIdRequest
-	(*DonationRequest)(nil),      // 1: donation.DonationRequest
-	(*DonationResponse)(nil),     // 2: donation.DonationResponse
-	(*Donation)(nil),             // 3: donation.Donation
-	(*GetDonationsRequest)(nil),  // 4: donation.GetDonationsRequest
-	(*GetDonationsResponse)(nil), // 5: donation.GetDonationsResponse
+	(*DonationIdRequest)(nil),      // 0: donation.DonationIdRequest
+	(*DonationRequest)(nil),        // 1: donation.DonationRequest
+	(*DonationResponse)(nil),       // 2: donation.DonationResponse
+	(*Donation)(nil),               // 3: donation.Donation
+	(*GetDonationsRequest)(nil),    // 4: donation.GetDonationsRequest
+	(*GetDonationsResponse)(nil),   // 5: donation.GetDonationsResponse
+	(*TransactionIdRequest)(nil),   // 6: donation.TransactionIdRequest
+	(*TransactionRequest)(nil),     // 7: donation.TransactionRequest
+	(*TransactionResponse)(nil),    // 8: donation.TransactionResponse
+	(*Transaction)(nil),            // 9: donation.Transaction
+	(*GetTransactionRequest)(nil),  // 10: donation.GetTransactionRequest
+	(*GetTransactionResponse)(nil), // 11: donation.GetTransactionResponse
 }
 var file_pb_donation_proto_depIdxs = []int32{
-	3, // 0: donation.GetDonationsResponse.donations:type_name -> donation.Donation
-	0, // 1: donation.DonationService.GetDonationByID:input_type -> donation.DonationIdRequest
-	4, // 2: donation.DonationService.GetAllDonations:input_type -> donation.GetDonationsRequest
-	1, // 3: donation.DonationService.CreateDonation:input_type -> donation.DonationRequest
-	1, // 4: donation.DonationService.UpdateDonation:input_type -> donation.DonationRequest
-	2, // 5: donation.DonationService.GetDonationByID:output_type -> donation.DonationResponse
-	5, // 6: donation.DonationService.GetAllDonations:output_type -> donation.GetDonationsResponse
-	2, // 7: donation.DonationService.CreateDonation:output_type -> donation.DonationResponse
-	2, // 8: donation.DonationService.UpdateDonation:output_type -> donation.DonationResponse
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3,  // 0: donation.GetDonationsResponse.donations:type_name -> donation.Donation
+	9,  // 1: donation.GetTransactionResponse.transactions:type_name -> donation.Transaction
+	0,  // 2: donation.DonationService.GetDonationByID:input_type -> donation.DonationIdRequest
+	4,  // 3: donation.DonationService.GetAllDonations:input_type -> donation.GetDonationsRequest
+	1,  // 4: donation.DonationService.CreateDonation:input_type -> donation.DonationRequest
+	1,  // 5: donation.DonationService.UpdateDonation:input_type -> donation.DonationRequest
+	6,  // 6: donation.DonationService.GetTransactionByID:input_type -> donation.TransactionIdRequest
+	10, // 7: donation.DonationService.GetAllTransactionss:input_type -> donation.GetTransactionRequest
+	7,  // 8: donation.DonationService.CreateTransaction:input_type -> donation.TransactionRequest
+	7,  // 9: donation.DonationService.UpdateTransaction:input_type -> donation.TransactionRequest
+	2,  // 10: donation.DonationService.GetDonationByID:output_type -> donation.DonationResponse
+	5,  // 11: donation.DonationService.GetAllDonations:output_type -> donation.GetDonationsResponse
+	2,  // 12: donation.DonationService.CreateDonation:output_type -> donation.DonationResponse
+	2,  // 13: donation.DonationService.UpdateDonation:output_type -> donation.DonationResponse
+	8,  // 14: donation.DonationService.GetTransactionByID:output_type -> donation.TransactionResponse
+	11, // 15: donation.DonationService.GetAllTransactionss:output_type -> donation.GetTransactionResponse
+	8,  // 16: donation.DonationService.CreateTransaction:output_type -> donation.TransactionResponse
+	8,  // 17: donation.DonationService.UpdateTransaction:output_type -> donation.TransactionResponse
+	10, // [10:18] is the sub-list for method output_type
+	2,  // [2:10] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_pb_donation_proto_init() }
@@ -541,7 +1019,7 @@ func file_pb_donation_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pb_donation_proto_rawDesc), len(file_pb_donation_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
