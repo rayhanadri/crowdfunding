@@ -7,11 +7,12 @@
 package pb
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -1010,7 +1011,7 @@ const file_pb_donation_proto_rawDesc = "" +
 	" \x01(\tR\tupdatedAt\"\x18\n" +
 	"\x16GetTransactionsRequest\"T\n" +
 	"\x17GetTransactionsResponse\x129\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x15.donation.TransactionR\ftransactions2\x95\x05\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x15.donation.TransactionR\ftransactions2\xe7\x05\n" +
 	"\x0fDonationService\x12J\n" +
 	"\x0fGetDonationByID\x12\x1b.donation.DonationIdRequest\x1a\x1a.donation.DonationResponse\x12P\n" +
 	"\x0fGetAllDonations\x12\x1d.donation.GetDonationsRequest\x1a\x1e.donation.GetDonationsResponse\x12G\n" +
@@ -1019,7 +1020,8 @@ const file_pb_donation_proto_rawDesc = "" +
 	"\x12GetTransactionByID\x12\x1e.donation.TransactionIdRequest\x1a\x1d.donation.TransactionResponse\x12Y\n" +
 	"\x12GetAllTransactions\x12 .donation.GetTransactionsRequest\x1a!.donation.GetTransactionsResponse\x12P\n" +
 	"\x11CreateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponse\x12P\n" +
-	"\x11UpdateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponseB\x05Z\x03/pbb\x06proto3"
+	"\x11UpdateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponse\x12P\n" +
+	"\x0fSyncTransaction\x12\x1e.donation.TransactionIdRequest\x1a\x1d.donation.TransactionResponseB\x05Z\x03/pbb\x06proto3"
 
 var (
 	file_pb_donation_proto_rawDescOnce sync.Once
@@ -1059,16 +1061,18 @@ var file_pb_donation_proto_depIdxs = []int32{
 	10, // 7: donation.DonationService.GetAllTransactions:input_type -> donation.GetTransactionsRequest
 	7,  // 8: donation.DonationService.CreateTransaction:input_type -> donation.TransactionRequest
 	7,  // 9: donation.DonationService.UpdateTransaction:input_type -> donation.TransactionRequest
-	2,  // 10: donation.DonationService.GetDonationByID:output_type -> donation.DonationResponse
-	5,  // 11: donation.DonationService.GetAllDonations:output_type -> donation.GetDonationsResponse
-	2,  // 12: donation.DonationService.CreateDonation:output_type -> donation.DonationResponse
-	2,  // 13: donation.DonationService.UpdateDonation:output_type -> donation.DonationResponse
-	8,  // 14: donation.DonationService.GetTransactionByID:output_type -> donation.TransactionResponse
-	11, // 15: donation.DonationService.GetAllTransactions:output_type -> donation.GetTransactionsResponse
-	8,  // 16: donation.DonationService.CreateTransaction:output_type -> donation.TransactionResponse
-	8,  // 17: donation.DonationService.UpdateTransaction:output_type -> donation.TransactionResponse
-	10, // [10:18] is the sub-list for method output_type
-	2,  // [2:10] is the sub-list for method input_type
+	6,  // 10: donation.DonationService.SyncTransaction:input_type -> donation.TransactionIdRequest
+	2,  // 11: donation.DonationService.GetDonationByID:output_type -> donation.DonationResponse
+	5,  // 12: donation.DonationService.GetAllDonations:output_type -> donation.GetDonationsResponse
+	2,  // 13: donation.DonationService.CreateDonation:output_type -> donation.DonationResponse
+	2,  // 14: donation.DonationService.UpdateDonation:output_type -> donation.DonationResponse
+	8,  // 15: donation.DonationService.GetTransactionByID:output_type -> donation.TransactionResponse
+	11, // 16: donation.DonationService.GetAllTransactions:output_type -> donation.GetTransactionsResponse
+	8,  // 17: donation.DonationService.CreateTransaction:output_type -> donation.TransactionResponse
+	8,  // 18: donation.DonationService.UpdateTransaction:output_type -> donation.TransactionResponse
+	8,  // 19: donation.DonationService.SyncTransaction:output_type -> donation.TransactionResponse
+	11, // [11:20] is the sub-list for method output_type
+	2,  // [2:11] is the sub-list for method input_type
 	2,  // [2:2] is the sub-list for extension type_name
 	2,  // [2:2] is the sub-list for extension extendee
 	0,  // [0:2] is the sub-list for field type_name

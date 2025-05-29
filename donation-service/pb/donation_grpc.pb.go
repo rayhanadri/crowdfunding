@@ -27,6 +27,7 @@ const (
 	DonationService_GetAllTransactions_FullMethodName = "/donation.DonationService/GetAllTransactions"
 	DonationService_CreateTransaction_FullMethodName  = "/donation.DonationService/CreateTransaction"
 	DonationService_UpdateTransaction_FullMethodName  = "/donation.DonationService/UpdateTransaction"
+	DonationService_SyncTransaction_FullMethodName    = "/donation.DonationService/SyncTransaction"
 )
 
 // DonationServiceClient is the client API for DonationService service.
@@ -41,6 +42,7 @@ type DonationServiceClient interface {
 	GetAllTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error)
 	CreateTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 	UpdateTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
+	SyncTransaction(ctx context.Context, in *TransactionIdRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 }
 
 type donationServiceClient struct {
@@ -131,6 +133,16 @@ func (c *donationServiceClient) UpdateTransaction(ctx context.Context, in *Trans
 	return out, nil
 }
 
+func (c *donationServiceClient) SyncTransaction(ctx context.Context, in *TransactionIdRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TransactionResponse)
+	err := c.cc.Invoke(ctx, DonationService_SyncTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DonationServiceServer is the server API for DonationService service.
 // All implementations must embed UnimplementedDonationServiceServer
 // for forward compatibility.
@@ -143,6 +155,7 @@ type DonationServiceServer interface {
 	GetAllTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error)
 	CreateTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
 	UpdateTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
+	SyncTransaction(context.Context, *TransactionIdRequest) (*TransactionResponse, error)
 	mustEmbedUnimplementedDonationServiceServer()
 }
 
@@ -176,6 +189,9 @@ func (UnimplementedDonationServiceServer) CreateTransaction(context.Context, *Tr
 }
 func (UnimplementedDonationServiceServer) UpdateTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTransaction not implemented")
+}
+func (UnimplementedDonationServiceServer) SyncTransaction(context.Context, *TransactionIdRequest) (*TransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncTransaction not implemented")
 }
 func (UnimplementedDonationServiceServer) mustEmbedUnimplementedDonationServiceServer() {}
 func (UnimplementedDonationServiceServer) testEmbeddedByValue()                         {}
@@ -342,6 +358,24 @@ func _DonationService_UpdateTransaction_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DonationService_SyncTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransactionIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DonationServiceServer).SyncTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DonationService_SyncTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DonationServiceServer).SyncTransaction(ctx, req.(*TransactionIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DonationService_ServiceDesc is the grpc.ServiceDesc for DonationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -380,6 +414,10 @@ var DonationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTransaction",
 			Handler:    _DonationService_UpdateTransaction_Handler,
+		},
+		{
+			MethodName: "SyncTransaction",
+			Handler:    _DonationService_SyncTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

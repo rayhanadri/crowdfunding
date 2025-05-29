@@ -14,6 +14,7 @@ service DonationService {
   rpc GetAllTransactions(GetTransactionsRequest) returns (GetTransactionsResponse);
   rpc CreateTransaction(TransactionRequest) returns (TransactionResponse);
   rpc UpdateTransaction(TransactionRequest) returns (TransactionResponse);
+  rpc SyncTransaction(TransactionIdRequest) returns (TransactionResponse);
 }
 
 message DonationIdRequest {
