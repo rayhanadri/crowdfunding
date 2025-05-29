@@ -16,6 +16,36 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/donations": {
+            "get": {
+                "description": "Get all donations for an active user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "donations"
+                ],
+                "summary": "Get all donations for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003caccess_token\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new donation for a user",
                 "consumes": [
@@ -38,11 +68,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Donation object",
-                        "name": "entity.Donation",
+                        "name": "entity.DonationRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Donation"
+                            "$ref": "#/definitions/entity.DonationRequest"
                         }
                     }
                 ],
@@ -123,11 +153,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Donation object",
-                        "name": "model.Donation",
+                        "name": "entity.DonationRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Donation"
+                            "$ref": "#/definitions/entity.DonationRequest"
                         }
                     }
                 ],
@@ -142,6 +172,36 @@ const docTemplate = `{
             }
         },
         "/transactions": {
+            "get": {
+                "description": "Get all transactions for an active user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get all transactions for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003caccess_token\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new transaction for a user",
                 "consumes": [
@@ -164,11 +224,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Transaction object",
-                        "name": "model.Transaction",
+                        "name": "entity.TransactionRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Transaction"
+                            "$ref": "#/definitions/entity.TransactionRequest"
                         }
                     }
                 ],
@@ -182,7 +242,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/transactions/check-update-transaction/{id}": {
+        "/transactions/sync-transaction/{id}": {
             "put": {
                 "description": "Get details of a specific transaction by its ID and check its status",
                 "consumes": [
@@ -209,15 +269,6 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Transaction object",
-                        "name": "model.Transaction",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.Transaction"
-                        }
                     }
                 ],
                 "responses": {
@@ -297,11 +348,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Transaction object",
-                        "name": "model.Transaction",
+                        "name": "entity.TransactionRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Transaction"
+                            "$ref": "#/definitions/entity.TransactionRequest"
                         }
                     }
                 ],
@@ -488,58 +539,11 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entity.Campaign": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "collected_amount": {
-                    "type": "number"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "deadline": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "min_donation": {
-                    "type": "number"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "target_amount": {
-                    "type": "number"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/entity.User"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.Donation": {
+        "entity.DonationRequest": {
             "type": "object",
             "properties": {
                 "amount": {
                     "type": "number"
-                },
-                "campaign": {
-                    "$ref": "#/definitions/entity.Campaign"
                 },
                 "campaign_id": {
                     "type": "integer"
@@ -559,9 +563,6 @@ const docTemplate = `{
                 "updated_at": {
                     "type": "string"
                 },
-                "user": {
-                    "$ref": "#/definitions/entity.User"
-                },
                 "user_id": {
                     "type": "integer"
                 }
@@ -579,7 +580,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.Transaction": {
+        "entity.TransactionRequest": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -587,9 +588,6 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string"
-                },
-                "donation": {
-                    "$ref": "#/definitions/entity.Donation"
                 },
                 "donation_id": {
                     "type": "integer"
@@ -610,29 +608,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 },
                 "updated_at": {

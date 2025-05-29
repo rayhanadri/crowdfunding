@@ -1,5 +1,5 @@
--- Tabel Users (Pengguna)
-CREATE TABLE users (
+-- Tabel "users"."users" (Pengguna)
+CREATE TABLE "users"."users" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
@@ -9,9 +9,9 @@ CREATE TABLE users (
 );
 
 -- Tabel Campaigns (Kampanye Donasi)
-CREATE TABLE campaigns (
+CREATE TABLE "campaigns"."campaigns" (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL,
     title VARCHAR(200) NOT NULL,
     description VARCHAR(255) NOT NULL,
     target_amount NUMERIC(15,2) NOT NULL,
@@ -24,11 +24,11 @@ CREATE TABLE campaigns (
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabel Donations (Riwayat Donasi)
-CREATE TABLE donations (
+-- Tabel "donations"."donations" (Riwayat Donasi)
+CREATE TABLE "donations"."donations" (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
-    campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    campaign_id INTEGER NOT NULL,
     amount NUMERIC(15,2) NOT NULL,
     message VARCHAR(255),
 	status VARCHAR(50) DEFAULT 'PENDING',
@@ -36,10 +36,10 @@ CREATE TABLE donations (
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabel Transactions (Transaksi Keuangan)
-CREATE TABLE transactions (
+-- Tabel "transactions"."transactions" (Transaksi Keuangan)
+CREATE TABLE "transactions"."transactions" (
     id SERIAL PRIMARY KEY,
-    donation_id INTEGER NOT NULL REFERENCES donations(id) ON DELETE CASCADE,
+    donation_id INTEGER NOT NULL,
 	invoice_id VARCHAR(255),
 	invoice_url VARCHAR(255),
 	invoice_description VARCHAR(255),
@@ -51,7 +51,7 @@ CREATE TABLE transactions (
 );
 
 -- Example Data
-INSERT INTO users (name, email, password)
+INSERT INTO "users"."users" (name, email, password)
 VALUES
 ('Andi Wijaya', 'andi@example.com', 'hashed_password_1'),
 ('Siti Rahma', 'siti@example.com', 'hashed_password_2'),
@@ -67,7 +67,7 @@ VALUES
 (4, 'Bantu Korban Banjir', 'Penggalangan dana untuk korban banjir di Kalimantan', 20000000, 12000000, '2025-11-20', 'ACTIVE', 'Bencana Alam', 10000),
 (5, 'Dukung Usaha Kecil Ibu Rumah Tangga', 'Modal usaha kecil untuk ibu rumah tangga', 5000000, 1500000, '2025-08-01', 'ACTIVE', 'Ekonomi', 5000);
 
-INSERT INTO donations (user_id, campaign_id, amount, message, status)
+INSERT INTO "donations"."donations" (user_id, campaign_id, amount, message, status)
 VALUES
 (2, 1, 50000, 'Semoga lekas sembuh', 'PAID'),
 (3, 2, 100000, 'Semoga mushola cepat direnovasi', 'PAID'),
@@ -75,7 +75,7 @@ VALUES
 (5, 4, 75000, 'Bantuan untuk saudara di Kalimantan', 'PAID'),
 (1, 5, 30000, 'Semoga usaha berjalan lancar', 'PENDING');
 
-INSERT INTO transactions (
+INSERT INTO "transactions"."transactions" (
     donation_id, invoice_id, invoice_url, invoice_description,
     payment_method, amount, status
 ) VALUES

@@ -34,7 +34,7 @@ func NewDonationHandler(donationRepo repository.DonationRepository) DonationHand
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Success 200 {object} entity.Response
-// @Router /donations/{id} [get]
+// @Router /donations [get]
 func (h *donationHandler) GetAllDonations(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
@@ -66,7 +66,7 @@ func (h *donationHandler) GetAllDonations(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Param entity.Donation body entity.Donation true "Donation object" // Updated to use the correct package
+// @Param entity.DonationRequest body entity.DonationRequest true "Donation object" // Updated to use the correct package
 // @Success 201 {object} entity.Response
 // @Router /donations [post] // Updated the router path to use POST method
 func (h *donationHandler) CreateDonation(c echo.Context) error {
@@ -144,7 +144,7 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param id path int true "Donation ID"
-// @Param entity.Donation body entity.Donation true "Donation object"
+// @Param entity.DonationRequest body entity.DonationRequest true "Donation object"
 // @Success 200 {object} entity.Response
 // @Router /donations/{id} [put] // Updated the router path to use PUT method
 func (h *donationHandler) UpdateDonation(c echo.Context) error {

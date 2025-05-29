@@ -36,7 +36,7 @@ func NewTransactionHandler(transactionRepo repository.TransactionRepository) Tra
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Success 200 {object} entity.Response
-// @Router /transactions/{id} [get]
+// @Router /transactions [get]
 func (h *transactionHandler) GetAllTransaction(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
@@ -55,8 +55,9 @@ func (h *transactionHandler) GetAllTransaction(c echo.Context) error {
 		})
 	}
 	userIdInt := int(userIdFloat)
+	log.Println("userIdInt", userIdInt)
 
-	transactions, err := h.transactionRepo.GetAllTransaction(userIdInt)
+	transactions, err := h.transactionRepo.GetAllTransaction()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
@@ -77,7 +78,7 @@ func (h *transactionHandler) GetAllTransaction(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Param entity.Transaction body entity.Transaction true "Transaction object"
+// @Param entity.TransactionRequest body entity.TransactionRequest true "Transaction object"
 // @Success 201 {object} entity.Response
 // @Router /transactions [post] // Updated the router path to use POST method
 func (h *transactionHandler) CreateTransaction(c echo.Context) error {
@@ -125,7 +126,7 @@ func (h *transactionHandler) CreateTransaction(c echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param id path int true "Transaction ID"
-// @Param entity.Transaction body entity.Transaction true "Transaction object"
+// @Param entity.TransactionRequest body entity.TransactionRequest true "Transaction object"
 // @Success 200 {object} entity.Response
 // @Router /transactions/{id} [put] // Updated the router path to use PUT method
 func (h *transactionHandler) UpdateTransaction(c echo.Context) error {
@@ -184,7 +185,6 @@ func (h *transactionHandler) UpdateTransaction(c echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param id path int true "Transaction ID"
-// @Param entity.Transaction body entity.Transaction true "Transaction object"
 // @Success 200 {object} entity.Response
 // @Router /transactions/sync-transaction/{id} [put] // Updated the router path to use PUT method
 func (h *transactionHandler) SyncTransaction(c echo.Context) error {

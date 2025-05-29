@@ -11,11 +11,11 @@ type Donation struct {
 	CampaignID int `json:"campaign_id"`
 	// Campaign   Campaign `gorm:"foreignKey:CampaignID" json:"campaign"` // corrected the import path
 
-	Amount      float64   `json:"amount"`
-	MessageText string    `json:"message"`
-	Status      string    `json:"status"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	Amount    float64   `json:"amount"`
+	Message   string    `json:"message"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (Donation) TableName() string {

@@ -14,7 +14,7 @@ func TestGetTransactionByID_Success(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing a mock transaction object
-	mockUserId := 1
+	// mockUserId := 1
 
 	mockTransaction := model.Transaction{
 		ID:                 1,
@@ -31,8 +31,8 @@ func TestGetTransactionByID_Success(t *testing.T) {
 	mockTransactionPtr := &mockTransaction
 
 	// Representing retrieving a transaction by ID from the database
-	mockRepo.On("GetTransactionByID", mockUserId, 1).Return(mockTransactionPtr, nil)
-	transactionPtr, err := mockRepo.GetTransactionByID(mockUserId, 1)
+	mockRepo.On("GetTransactionByID", 1).Return(mockTransactionPtr, nil)
+	transactionPtr, err := mockRepo.GetTransactionByID(1)
 
 	// Check if the transaction is retrieved successfully
 	assert.NoError(t, err)
@@ -45,9 +45,8 @@ func TestGetTransactionByID_Failed(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing retrieving a transaction by ID from the database
-	mockUserId := 1
-	mockRepo.On("GetTransactionByID", mockUserId, 1).Return(nil, assert.AnError)
-	transactionPtr, err := mockRepo.GetTransactionByID(mockUserId, 1)
+	mockRepo.On("GetTransactionByID", 1).Return(nil, assert.AnError)
+	transactionPtr, err := mockRepo.GetTransactionByID(1)
 
 	// Check if the transaction retrieval failed as expected
 	assert.Error(t, err)
@@ -60,7 +59,7 @@ func TestGetAllTransaction_Success(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing transactions retrieved from the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransactions := []model.Transaction{
 		{
 			ID:                 1,
@@ -91,8 +90,8 @@ func TestGetAllTransaction_Success(t *testing.T) {
 	mockTransactionsPtr := &mockTransactions
 
 	// Representing retrieving all transactions from the database
-	mockRepo.On("GetAllTransaction", mockUserId).Return(mockTransactionsPtr, nil)
-	transactions, err := mockRepo.GetAllTransaction(mockUserId)
+	mockRepo.On("GetAllTransaction").Return(mockTransactionsPtr, nil)
+	transactions, err := mockRepo.GetAllTransaction()
 
 	// Check if the transaction is retrieved successfully
 	assert.NoError(t, err)
@@ -105,9 +104,8 @@ func TestGetAllTransaction_Failed(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing retrieving all transactions from the database
-	mockUserId := 1
-	mockRepo.On("GetAllTransaction", mockUserId).Return(nil, assert.AnError)
-	transactions, err := mockRepo.GetAllTransaction(mockUserId)
+	mockRepo.On("GetAllTransaction").Return(nil, assert.AnError)
+	transactions, err := mockRepo.GetAllTransaction()
 
 	// Check if the transaction retrieval failed as expected
 	assert.Error(t, err)
@@ -120,7 +118,7 @@ func TestCreateTransaction_Success(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing a transaction created and retrieved from the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransaction := model.Transaction{
 		ID:                 1,
 		DonationID:         1,
@@ -136,8 +134,8 @@ func TestCreateTransaction_Success(t *testing.T) {
 	mockTransactionPtr := &mockTransaction
 
 	// Representing creating a transaction in the database
-	mockRepo.On("CreateTransaction", mockUserId, mockTransactionPtr).Return(mockTransactionPtr, nil)
-	transactionPtr, err := mockRepo.CreateTransaction(mockUserId, mockTransactionPtr)
+	mockRepo.On("CreateTransaction", mockTransactionPtr).Return(mockTransactionPtr, nil)
+	transactionPtr, err := mockRepo.CreateTransaction(mockTransactionPtr)
 
 	// Check if the transaction is created successfully
 	assert.NoError(t, err)
@@ -150,7 +148,7 @@ func TestCreateTransaction_Failed(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing creating a transaction in the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransaction := model.Transaction{
 		ID:                 1,
 		DonationID:         1,
@@ -165,8 +163,8 @@ func TestCreateTransaction_Failed(t *testing.T) {
 	}
 	mockTransactionPtr := &mockTransaction
 
-	mockRepo.On("CreateTransaction", mockUserId, mockTransactionPtr).Return(nil, assert.AnError)
-	transactionPtr, err := mockRepo.CreateTransaction(mockUserId, mockTransactionPtr)
+	mockRepo.On("CreateTransaction", mockTransactionPtr).Return(nil, assert.AnError)
+	transactionPtr, err := mockRepo.CreateTransaction(mockTransactionPtr)
 
 	// Check if the transaction creation failed as expected
 	assert.Error(t, err)
@@ -179,7 +177,7 @@ func TestUpdateTransaction_Success(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing a transaction created and retrieved from the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransaction := model.Transaction{
 		ID:                 1,
 		DonationID:         1,
@@ -195,8 +193,8 @@ func TestUpdateTransaction_Success(t *testing.T) {
 	mockTransactionPtr := &mockTransaction
 
 	// Representing updating a transaction in the database
-	mockRepo.On("UpdateTransaction", mockUserId, mockTransactionPtr).Return(mockTransactionPtr, nil)
-	transactionPtr, err := mockRepo.UpdateTransaction(mockUserId, mockTransactionPtr)
+	mockRepo.On("UpdateTransaction", mockTransactionPtr).Return(mockTransactionPtr, nil)
+	transactionPtr, err := mockRepo.UpdateTransaction(mockTransactionPtr)
 
 	// Check if the transaction is updated successfully
 	assert.NoError(t, err)
@@ -209,7 +207,7 @@ func TestUpdateTransaction_Failed(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing a transaction created and retrieved from the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransaction := model.Transaction{
 		ID:                 1,
 		DonationID:         1,
@@ -225,8 +223,8 @@ func TestUpdateTransaction_Failed(t *testing.T) {
 	mockTransactionPtr := &mockTransaction
 
 	// Representing updating a transaction in the database
-	mockRepo.On("UpdateTransaction", mockUserId, mockTransactionPtr).Return(nil, assert.AnError)
-	transactionPtr, err := mockRepo.UpdateTransaction(mockUserId, mockTransactionPtr)
+	mockRepo.On("UpdateTransaction", mockTransactionPtr).Return(nil, assert.AnError)
+	transactionPtr, err := mockRepo.UpdateTransaction(mockTransactionPtr)
 
 	// Check if the transaction update failed as expected
 	assert.Error(t, err)
@@ -235,11 +233,11 @@ func TestUpdateTransaction_Failed(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 }
 
-func TestCheckUpdateTransaction_Success(t *testing.T) {
+func TestSyncTransaction_Success(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing a transaction created and retrieved from the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransaction := model.Transaction{
 		ID:                 1,
 		DonationID:         1,
@@ -254,11 +252,11 @@ func TestCheckUpdateTransaction_Success(t *testing.T) {
 	}
 	mockTransactionPtr := &mockTransaction
 
-	// Representing updating a transaction in the database
-	mockRepo.On("CheckUpdateTransaction", mockUserId, mockTransactionPtr).Return(mockTransactionPtr, nil)
-	transactionPtr, err := mockRepo.CheckUpdateTransaction(mockUserId, mockTransactionPtr)
+	// Representing syncing a transaction in the database
+	mockRepo.On("SyncTransaction", mockTransaction.ID).Return(mockTransactionPtr, nil)
+	transactionPtr, err := mockRepo.SyncTransaction(mockTransaction.ID)
 
-	// Check if the transaction is updated successfully
+	// Check if the transaction is synced successfully
 	assert.NoError(t, err)
 	assert.NotNil(t, transactionPtr)
 
@@ -269,7 +267,7 @@ func TestCheckUpdateTransaction_Failed(t *testing.T) {
 	mockRepo := new(repository.MockTransactionRepository)
 
 	// Representing a transaction created and retrieved from the database
-	mockUserId := 1
+	// mockUserId := 1
 	mockTransaction := model.Transaction{
 		ID:                 1,
 		DonationID:         1,
@@ -282,11 +280,11 @@ func TestCheckUpdateTransaction_Failed(t *testing.T) {
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
 	}
-	mockTransactionPtr := &mockTransaction
+	// mockTransactionPtr := &mockTransaction
 
-	// Representing updating a transaction in the database
-	mockRepo.On("CheckUpdateTransaction", mockUserId, mockTransactionPtr).Return(nil, assert.AnError)
-	transactionPtr, err := mockRepo.CheckUpdateTransaction(mockUserId, mockTransactionPtr)
+	// Representing syncing a transaction in the database
+	mockRepo.On("SyncTransaction", mockTransaction.ID).Return(nil, assert.AnError)
+	transactionPtr, err := mockRepo.SyncTransaction(mockTransaction.ID)
 
 	// Check if the transaction update failed as expected
 	assert.Error(t, err)

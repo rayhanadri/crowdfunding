@@ -12,6 +12,7 @@ import (
 	user_model "github.com/rayhanadri/crowdfunding/user-service/model"
 	user_pb "github.com/rayhanadri/crowdfunding/user-service/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -26,16 +27,23 @@ type DonationService struct {
 }
 
 func GetUserByID(userId int32) (userModel *user_model.User, error error) {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	address := "user-service-273575294549.asia-southeast2.run.app:443"
+	conn, err := grpc.Dial(
+		address,
+		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
+	)
+
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
+		return nil, err
 	}
+
 	defer conn.Close()
 
 	// Create a new client
 	client := user_pb.NewUserServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	// Create a request
 	req := &user_pb.UserIdRequest{Id: userId}
@@ -68,16 +76,23 @@ func GetUserByID(userId int32) (userModel *user_model.User, error error) {
 }
 
 func GetCampaignByID(campaignId string) (campaignModel *campaign_model.CampaignDB, error error) {
-	conn, err := grpc.Dial("user-service-273575294549.asia-southeast2.run.app:443", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	address := "user-service-273575294549.asia-southeast2.run.app:443"
+	conn, err := grpc.Dial(
+		address,
+		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
+	)
+
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
+		return nil, err
 	}
+
 	defer conn.Close()
 
 	// Create a new client
 	client := campaign_pb.NewCampaignServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	// Create a request
 	req := &campaign_pb.GetCampaignByIDRequest{Id: campaignId}
@@ -120,7 +135,7 @@ func UpdateCampaignByID(campaignId string, user_id int32, title string, descript
 	// Create a new client
 	client := campaign_pb.NewCampaignServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	// Create a request
 	req := &campaign_pb.UpdateCampaignByIDRequest{
@@ -189,7 +204,7 @@ func (s *DonationService) GetAllDonations(ctx context.Context, req *pb.GetDonati
 			UserId:     int32(donation.UserID),
 			CampaignId: int32(donation.CampaignID),
 			Amount:     float32(donation.Amount),
-			Message:    donation.MessageText,
+			Message:    donation.Message,
 			Status:     donation.Status,
 			CreatedAt:  donation.CreatedAt.Format(time.RFC3339),
 			UpdatedAt:  donation.UpdatedAt.Format(time.RFC3339),
@@ -209,13 +224,13 @@ func (s *DonationService) GetDonationByID(ctx context.Context, req *pb.DonationI
 		return nil, err
 	}
 
-	userModel, err := GetUserByID(int32(donation.UserID))
-	if err != nil {
-		return nil, err
-	}
-	if userModel == nil {
-		return nil, fmt.Errorf("user with ID %d not found", donation.UserID)
-	}
+	// userModel, err := GetUserByID(int32(donation.UserID))
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if userModel == nil {
+	// 	return nil, fmt.Errorf("user with ID %d not found", donation.UserID)
+	// }
 
 	// Create a donation response
 	response := &pb.DonationResponse{
@@ -223,22 +238,27 @@ func (s *DonationService) GetDonationByID(ctx context.Context, req *pb.DonationI
 		UserId:      int32(donation.UserID),
 		CampaignId:  int32(donation.CampaignID),
 		Amount:      float32(donation.Amount),
-		MessageText: donation.MessageText,
+		MessageText: donation.Message,
 		Status:      donation.Status,
 		CreatedAt:   donation.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:   donation.UpdatedAt.Format(time.RFC3339),
 	}
+
+	log.Println(donation.Message)
+
+	log.Printf("Donation ID: %d, User ID: %d, Campaign ID: %d, Amount: %.2f, Message: %s, CreatedAt: %s, UpdatedAt: %s\n",
+		response.GetId(), response.GetUserId(), response.GetCampaignId(), response.GetAmount(), response.GetMessageText(), response.GetCreatedAt(), response.GetUpdatedAt())
 
 	return response, nil
 }
 
 func (r *DonationService) CreateDonation(ctx context.Context, req *pb.DonationRequest) (*pb.DonationResponse, error) {
 	donation := &model.Donation{
-		UserID:      int(req.GetId()),
-		CampaignID:  int(req.GetCampaignId()),
-		Amount:      float64(req.GetAmount()),
-		MessageText: req.GetMessage(),
-		Status:      req.GetStatus(),
+		UserID:     int(req.GetId()),
+		CampaignID: int(req.GetCampaignId()),
+		Amount:     float64(req.GetAmount()),
+		Message:    req.GetMessage(),
+		Status:     req.GetStatus(),
 	}
 
 	//validate user data
@@ -277,7 +297,7 @@ func (r *DonationService) CreateDonation(ctx context.Context, req *pb.DonationRe
 		UserId:      int32(donation.UserID),
 		CampaignId:  int32(donation.CampaignID),
 		Amount:      float32(donation.Amount),
-		MessageText: donation.MessageText,
+		MessageText: donation.Message,
 		Status:      donation.Status,
 		CreatedAt:   donation.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:   donation.UpdatedAt.Format(time.RFC3339),
@@ -288,12 +308,12 @@ func (r *DonationService) CreateDonation(ctx context.Context, req *pb.DonationRe
 
 func (r *DonationService) UpdateDonation(ctx context.Context, req *pb.DonationRequest) (*pb.DonationResponse, error) {
 	donation := &model.Donation{
-		ID:          int(req.GetId()),
-		UserID:      int(req.GetUserId()),
-		CampaignID:  int(req.GetCampaignId()),
-		Amount:      float64(req.GetAmount()),
-		MessageText: req.GetMessage(),
-		Status:      req.GetStatus(),
+		ID:         int(req.GetId()),
+		UserID:     int(req.GetUserId()),
+		CampaignID: int(req.GetCampaignId()),
+		Amount:     float64(req.GetAmount()),
+		Message:    req.GetMessage(),
+		Status:     req.GetStatus(),
 	}
 
 	if err := config.DB.Model(donation).Updates(donation).Error; err != nil {
@@ -306,7 +326,7 @@ func (r *DonationService) UpdateDonation(ctx context.Context, req *pb.DonationRe
 		UserId:     int32(donation.UserID),
 		CampaignId: int32(donation.CampaignID),
 		Amount:     float32(donation.Amount),
-		Message:    donation.MessageText,
+		Message:    donation.Message,
 		Status:     donation.Status,
 		CreatedAt:  donation.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:  donation.UpdatedAt.Format(time.RFC3339),
@@ -410,21 +430,21 @@ func (r *DonationService) CreateTransaction(ctx context.Context, req *pb.Transac
 
 	//Check campaign
 	// Get the campaign by ID
-	campaignModel, err := GetCampaignByID(fmt.Sprintf("%d", donation.CampaignId))
-	if err != nil {
-		response := &pb.TransactionResponse{
-			Message: "Failed to get campaign",
-			Error:   err.Error(),
-		}
-		return response, err
-	}
-	if campaignModel.Status != "active" {
-		response := &pb.TransactionResponse{
-			Message: "Campaign is not active",
-			Error:   "Campaign is not active",
-		}
-		return response, errors.New("campaign is not active")
-	}
+	// campaignModel, err := GetCampaignByID(fmt.Sprintf("%d", donation.CampaignId))
+	// if err != nil {
+	// 	response := &pb.TransactionResponse{
+	// 		Message: "Failed to get campaign",
+	// 		Error:   err.Error(),
+	// 	}
+	// 	return response, err
+	// }
+	// if campaignModel.Status != "active" {
+	// 	response := &pb.TransactionResponse{
+	// 		Message: "Campaign is not active",
+	// 		Error:   "Campaign is not active",
+	// 	}
+	// 	return response, errors.New("campaign is not active")
+	// }
 
 	// Get User details
 	userModel, err := GetUserByID(donationUserID)

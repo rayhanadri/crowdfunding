@@ -29,7 +29,6 @@ func NewDonationRepository(address string) DonationRepository {
 }
 
 func (r *donationRepository) GetAllDonations() (*[]model.Donation, error) {
-	// validate user id
 	conn, err := grpc.Dial(
 		r.address,
 		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
@@ -127,7 +126,7 @@ func (r *donationRepository) GetDonationByID(donationID int) (*model.Donation, e
 	donation.UserID = int(res.UserId)
 	donation.CampaignID = int(res.CampaignId)
 	donation.Amount = float64(res.GetAmount())
-	donation.MessageText = res.GetMessage()
+	donation.MessageText = res.GetMessageText()
 	donation.Status = res.GetStatus()
 	donation.CreatedAt = GetCreatedAtTime
 	donation.UpdatedAt = GetUpdatedAtTime
@@ -140,7 +139,7 @@ func (r *donationRepository) GetDonationByID(donationID int) (*model.Donation, e
 }
 
 func (r *donationRepository) CreateDonation(donation *model.Donation) (*model.Donation, error) {
-	// validate user id
+	// call grpc
 	conn, err := grpc.Dial(
 		r.address,
 		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS

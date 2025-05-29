@@ -11,8 +11,6 @@ import (
 	"github.com/rayhanadri/crowdfunding/donation-service/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-
-	"github.com/rayhanadri/crowdfunding/api-gateway/entity"
 )
 
 type TransactionRepository interface {
@@ -20,7 +18,7 @@ type TransactionRepository interface {
 	CreateTransaction(transaction *model.Transaction) (*model.Transaction, error)
 	GetTransactionByID(transactionID int) (*model.Transaction, error)
 	UpdateTransaction(transaction *model.Transaction) (*model.Transaction, error)
-	CheckUpdateTransaction(transaction *model.Transaction) (*model.Transaction, error)
+	SyncTransaction(transactionID int) (*model.Transaction, error)
 }
 
 type transactionRepository struct {
@@ -81,6 +79,33 @@ func (r *transactionRepository) GetAllTransaction() (*[]model.Transaction, error
 		transaction.CreatedAt = GetCreatedAtTime
 		transaction.UpdatedAt = GetUpdatedAtTime
 
+		// get donation from grpc
+		donationReq := &pb.DonationIdRequest{Id: int32(transaction.DonationID)}
+		donationRes, err := client.GetDonationByID(ctx, donationReq)
+		if err != nil {
+			log.Printf("Error calling GetDonation: %v", err)
+			return nil, err
+		}
+
+		GetDonationCreatedAtTime, err := time.Parse(time.RFC3339, donationRes.GetCreatedAt())
+		if err != nil {
+			return nil, fmt.Errorf("invalid created_at value: %v", err)
+		}
+		GetDonationUpdatedAtTime, err := time.Parse(time.RFC3339, donationRes.GetUpdatedAt())
+		if err != nil {
+			return nil, fmt.Errorf("invalid updated_at value: %v", err)
+		}
+
+		transaction.Donation = model.Donation{
+			ID:          int(donationRes.GetId()),
+			CampaignID:  int(donationRes.GetCampaignId()),
+			Amount:      float64(donationRes.GetAmount()),
+			MessageText: donationRes.GetMessageText(),
+			Status:      donationRes.GetStatus(),
+			CreatedAt:   GetDonationCreatedAtTime,
+			UpdatedAt:   GetDonationUpdatedAtTime,
+		}
+
 		// push to arrays
 		transactions = append(transactions, transaction)
 	}
@@ -91,121 +116,112 @@ func (r *transactionRepository) GetAllTransaction() (*[]model.Transaction, error
 	return &transactions, nil
 }
 
-func (r *transactionRepository) CreateTransaction(user_id int, transaction *model.Transaction) (*model.Transaction, error) {
-	// validate user id
-	user := new(entity.User)
-	if err := r.db.Where("id = ?", user_id).First(&user).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
+func (r *transactionRepository) CreateTransaction(transaction *model.Transaction) (*model.Transaction, error) {
+	// call grpc
+	conn, err := grpc.Dial(
+		r.address,
+		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
+	)
 
-	// get donation from donation id
-	donation := new(entity.Donation)
-	if err := r.db.Where("id = ?", transaction.DonationID).First(&donation).Error; err != nil {
-		return nil, errors.New("donation not found")
-	}
-
-	// check if donation user_id match
-	if donation.UserID != user_id {
-		return nil, errors.New("user not authorized")
-	}
-
-	// check if donation with user and donation id already exist
-	var existingTransaction model.Transaction
-	if err := r.db.Where("user_id = ? AND donation_id = ?", user_id, transaction.DonationID).First(&existingTransaction).Error; err == nil {
-		return nil, errors.New("transaction already exists")
-	}
-
-	// get campaign from donation
-	campaign := new(entity.Campaign)
-	if err := r.db.Where("id = ?", donation.CampaignID).First(&campaign).Error; err != nil {
-		return nil, errors.New("campaign not found")
-	}
-	// get campaign creator user
-	userCreator := new(entity.User)
-	if err := r.db.Where("id = ?", campaign.UserID).First(&userCreator).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
-
-	//fill transaction description based on campaign title
-	transaction.InvoiceDescription = campaign.Title
-
-	//query create db
-	if err := r.db.Create(transaction).Error; err != nil {
+	if err != nil {
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
-	// Assign All Inner Object for json
-	campaign.User = *userCreator
-	donation.Campaign = *campaign
-	donation.User = *user
-	transaction.Donation = model.Donation{
-		ID:         donation.ID,
-		CampaignID: donation.CampaignID,
-		UserID:     donation.UserID,
-		Amount:     donation.Amount,
-		Status:     donation.Status,
-		CreatedAt:  donation.CreatedAt,
-		UpdatedAt:  donation.UpdatedAt,
+	defer conn.Close()
+
+	// Create a new client
+	client := pb.NewDonationServiceClient(conn)
+	// Set a timeout for the request
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Create a request
+	req := &pb.TransactionRequest{Id: 0, DonationId: int32(transaction.DonationID), InvoiceId: "", InvoiceUrl: "", InvoiceDescription: "", PaymentMethod: "", Amount: float32(transaction.Amount), Status: "PENDING"}
+	// Call the CreateTransaction method
+	res, err := client.CreateTransaction(ctx, req) // Update to call CreateDonation instead of GetDonationByID
+	if err != nil {
+		log.Printf("Error calling CreateTransaction: %v", err)
+		return nil, err
 	}
+
+	GetCreatedAtTime, err := time.Parse(time.RFC3339, res.GetCreatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("invalid created_at value: %v", err)
+	}
+	GetUpdatedAtTime, err := time.Parse(time.RFC3339, res.GetUpdatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("invalid updated_at value: %v", err)
+	}
+
+	transaction.ID = int(res.Id)
+	transaction.DonationID = int(res.DonationId)
+	transaction.InvoiceID = res.GetInvoiceId()
+	transaction.InvoiceURL = res.GetInvoiceUrl()
+	transaction.InvoiceDescription = res.GetInvoiceDescription()
+	transaction.PaymentMethod = res.GetPaymentMethod()
+	transaction.Amount = float64(res.GetAmount())
+	transaction.Status = res.GetStatus()
+	transaction.CreatedAt = GetCreatedAtTime
+	transaction.UpdatedAt = GetUpdatedAtTime
 
 	return transaction, nil
 }
 
-func (r *transactionRepository) UpdateTransaction(user_id int, transaction *model.Transaction) (*model.Transaction, error) {
-	// validate user id
-	user := new(entity.User)
-	if err := r.db.Where("id = ?", user_id).First(&user).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
+func (r *transactionRepository) UpdateTransaction(transaction *model.Transaction) (*model.Transaction, error) {
+	// call grpc
+	conn, err := grpc.Dial(
+		r.address,
+		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
+	)
 
-	// get donation from donation id
-	donation := new(entity.Donation)
-	if err := r.db.Where("id = ?", transaction.DonationID).First(&donation).Error; err != nil {
-		return nil, errors.New("donation not found")
-	}
-
-	// check if donation user_id match
-	if donation.UserID != user_id {
-		return nil, errors.New("user not authorized")
-	}
-
-	// get campaign from donation
-	campaign := new(entity.Campaign)
-	if err := r.db.Where("id = ?", donation.CampaignID).First(&campaign).Error; err != nil {
-		return nil, errors.New("campaign not found")
-	}
-	// get campaign creator user
-	userCreator := new(entity.User)
-	if err := r.db.Where("id = ?", campaign.UserID).First(&userCreator).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
-
-	// get current date as update date
-	transaction.UpdatedAt = time.Now()
-
-	// query save transaction
-	if err := r.db.Save(transaction).Error; err != nil {
+	if err != nil {
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
-	// Assign All Inner Object for json
-	campaign.User = *userCreator
-	donation.Campaign = *campaign
-	transaction.Donation = model.Donation{
-		ID:         donation.ID,
-		CampaignID: donation.CampaignID,
-		UserID:     donation.UserID,
-		Amount:     donation.Amount,
-		Status:     donation.Status,
-		CreatedAt:  donation.CreatedAt,
-		UpdatedAt:  donation.UpdatedAt,
+	defer conn.Close()
+
+	// Create a new client
+	client := pb.NewDonationServiceClient(conn)
+	// Set a timeout for the request
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Create a request
+	req := &pb.TransactionRequest{Id: int32(transaction.ID), DonationId: int32(transaction.DonationID), InvoiceId: "", InvoiceUrl: "", InvoiceDescription: "", PaymentMethod: "", Amount: float32(transaction.Amount), Status: "PENDING"}
+	// Call the UpdateTransaction method
+	res, err := client.UpdateTransaction(ctx, req) // Update to call CreateDonation instead of GetDonationByID
+	if err != nil {
+		log.Printf("Error calling UpdateTransaction: %v", err)
+		return nil, err
 	}
+
+	GetCreatedAtTime, err := time.Parse(time.RFC3339, res.GetCreatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("invalid created_at value: %v", err)
+	}
+	GetUpdatedAtTime, err := time.Parse(time.RFC3339, res.GetUpdatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("invalid updated_at value: %v", err)
+	}
+
+	transaction.ID = int(res.Id)
+	transaction.DonationID = int(res.DonationId)
+	transaction.InvoiceID = res.GetInvoiceId()
+	transaction.InvoiceURL = res.GetInvoiceUrl()
+	transaction.InvoiceDescription = res.GetInvoiceDescription()
+	transaction.PaymentMethod = res.GetPaymentMethod()
+	transaction.Amount = float64(res.GetAmount())
+	transaction.Status = res.GetStatus()
+	transaction.CreatedAt = GetCreatedAtTime
+	transaction.UpdatedAt = GetUpdatedAtTime
 
 	return transaction, nil
 }
 
 func (r *transactionRepository) GetTransactionByID(transactionID int) (*model.Transaction, error) {
-	// validate user id
+	// call grpc
 	conn, err := grpc.Dial(
 		r.address,
 		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
@@ -257,73 +273,55 @@ func (r *transactionRepository) GetTransactionByID(transactionID int) (*model.Tr
 	return &transaction, nil
 }
 
-func (r *transactionRepository) CheckUpdateTransaction(user_id int, transaction *model.Transaction) (*model.Transaction, error) {
-	// validate user id
-	user := new(entity.User)
-	if err := r.db.Where("id = ?", user_id).First(&user).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
+func (r *transactionRepository) SyncTransaction(transactionID int) (*model.Transaction, error) {
+	// call grpc
+	conn, err := grpc.Dial(
+		r.address,
+		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
+	)
 
-	// get donation from donation id
-	donation := new(entity.Donation)
-	if err := r.db.Where("id = ?", transaction.DonationID).First(&donation).Error; err != nil {
-		return nil, errors.New("donation not found")
-	}
-
-	// check if donation user_id match
-	if donation.UserID != user_id {
-		return nil, errors.New("user not authorized")
-	}
-
-	// get campaign from donation
-	campaign := new(entity.Campaign)
-	if err := r.db.Where("id = ?", donation.CampaignID).First(&campaign).Error; err != nil {
-		return nil, errors.New("campaign not found")
-	}
-	// get campaign creator user
-	userCreator := new(entity.User)
-	if err := r.db.Where("id = ?", campaign.UserID).First(&userCreator).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
-
-	// get current date as update date
-	transaction.UpdatedAt = time.Now()
-
-	// query save transaction
-	if err := r.db.Save(transaction).Error; err != nil {
+	if err != nil {
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
-	// update donation
-	donation.Status = transaction.Status
+	defer conn.Close()
 
-	// update campaign
-	if transaction.Status == "PAID" {
-		campaign.CollectedAmount += transaction.Amount
+	// Create a new client
+	client := pb.NewDonationServiceClient(conn)
+	// Set a timeout for the request
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-		// save campaign
-		if err := r.db.Save(campaign).Error; err != nil {
-			return nil, err
-		}
-	}
-
-	// save donation
-	if err := r.db.Save(donation).Error; err != nil {
+	// Create a request
+	req := &pb.TransactionIdRequest{Id: int32(transactionID)} // Use the provided transactionID parameter
+	// Call the GetTransactionByID method
+	res, err := client.SyncTransaction(ctx, req)
+	if err != nil {
+		log.Printf("Error calling GetTransactionByID: %v", err)
 		return nil, err
 	}
 
-	// Assign All Inner Object for json
-	campaign.User = *userCreator
-	donation.Campaign = *campaign
-	transaction.Donation = model.Donation{
-		ID:         donation.ID,
-		CampaignID: donation.CampaignID,
-		UserID:     donation.UserID,
-		Amount:     donation.Amount,
-		Status:     donation.Status,
-		CreatedAt:  donation.CreatedAt,
-		UpdatedAt:  donation.UpdatedAt,
+	var transaction model.Transaction
+	GetCreatedAtTime, err := time.Parse(time.RFC3339, res.GetCreatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("invalid created_at value: %v", err)
+	}
+	GetUpdatedAtTime, err := time.Parse(time.RFC3339, res.GetUpdatedAt())
+	if err != nil {
+		return nil, fmt.Errorf("invalid updated_at value: %v", err)
 	}
 
-	return transaction, nil
+	transaction.ID = int(res.Id)
+	transaction.DonationID = int(res.DonationId)
+	transaction.InvoiceID = res.GetInvoiceId()
+	transaction.InvoiceURL = res.GetInvoiceUrl()
+	transaction.InvoiceDescription = res.GetInvoiceDescription()
+	transaction.PaymentMethod = res.GetPaymentMethod()
+	transaction.Amount = float64(res.GetAmount())
+	transaction.Status = res.GetStatus()
+	transaction.CreatedAt = GetCreatedAtTime
+	transaction.UpdatedAt = GetUpdatedAtTime
+
+	return &transaction, nil
 }
