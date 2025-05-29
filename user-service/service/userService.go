@@ -139,3 +139,32 @@ func (r *UserService) UpdateUser(ctx context.Context, req *pb.UserRequest) (*pb.
 
 	return response, nil
 }
+
+func (r *UserService) LoginUser(ctx context.Context, req *pb.UserLoginRequest) (*pb.UserResponse, error) {
+	email := req.GetEmail()
+	password := req.GetPassword()
+	if email == "" || password == "" {
+		return nil, errors.New("email and password are required")
+	}
+
+	// get pass from database and compare with user input
+	var userDb model.User
+	if err := config.DB.Where("email = ?", req.GetEmail()).First(&userDb).Error; err != nil {
+		return nil, err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(userDb.Password), []byte(password)); err != nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	// Create a user response
+	response := &pb.UserResponse{
+		Id:        int32(userDb.ID),
+		Name:      userDb.Name,
+		Email:     userDb.Email,
+		Password:  userDb.Password,
+		CreatedAt: userDb.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: userDb.UpdatedAt.Format(time.RFC3339),
+	}
+
+	return response, nil
+}

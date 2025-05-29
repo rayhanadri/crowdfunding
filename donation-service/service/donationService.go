@@ -7,10 +7,13 @@ import (
 	"log"
 	"time"
 
+	campaign_pb "github.com/rayhanadri/crowdfunding-app-campaign-service/campaign-service/gen/go/campaign/v1"
+	campaign_model "github.com/rayhanadri/crowdfunding-app-campaign-service/campaign-service/models" // corrected the import path
 	user_model "github.com/rayhanadri/crowdfunding/user-service/model"
 	user_pb "github.com/rayhanadri/crowdfunding/user-service/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/rayhanadri/crowdfunding/donation-service/config" // corrected the import path
 	"github.com/rayhanadri/crowdfunding/donation-service/external"
@@ -62,6 +65,102 @@ func GetUserByID(userId int32) (userModel *user_model.User, error error) {
 		UpdatedAt: updatedAt,
 	}
 	return userModel, nil
+}
+
+func GetCampaignByID(campaignId string) (campaignModel *campaign_model.CampaignDB, error error) {
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+
+	// Create a new client
+	client := campaign_pb.NewCampaignServiceClient(conn)
+	// Set a timeout for the request
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	// Create a request
+	req := &campaign_pb.GetCampaignByIDRequest{Id: campaignId}
+	// Call the GetCampaignByID method
+	res, err := client.GetCampaignByID(ctx, req) // Updated method call
+	if err != nil {
+		log.Fatalf("Error calling GetCampaignByID: %v", err)
+		return nil, err
+	}
+
+	resCampaign := res.Campaign
+	if len(resCampaign) == 0 {
+		return nil, fmt.Errorf("campaign with ID %s not found", campaignId)
+	}
+
+	campaignModel = &campaign_model.CampaignDB{
+		ID:              resCampaign[0].GetId(),
+		UserID:          resCampaign[0].GetUserId(),
+		Title:           resCampaign[0].GetTitle(),
+		Description:     resCampaign[0].GetDescription(),
+		TargetAmount:    resCampaign[0].GetTargetAmount(),
+		CollectedAmount: resCampaign[0].GetCollectedAmount(),
+		Deadline:        resCampaign[0].GetDeadline().AsTime(),
+		Status:          resCampaign[0].GetStatus().String(),
+		Category:        resCampaign[0].GetCategory().String(),
+		MinDonation:     resCampaign[0].GetMinDonation(),
+		CreatedAt:       resCampaign[0].GetCreatedAt().AsTime(),
+		UpdatedAt:       resCampaign[0].GetUpdatedAt().AsTime(),
+	}
+	return campaignModel, nil
+}
+
+func UpdateCampaignByID(campaignId string, user_id int32, title string, description string, target_amount int32, deadline time.Time, campaign_status string, campaign_category string, min_donation int32) (campaignModel *campaign_model.CampaignDB, error error) {
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+
+	// Create a new client
+	client := campaign_pb.NewCampaignServiceClient(conn)
+	// Set a timeout for the request
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	// Create a request
+	req := &campaign_pb.UpdateCampaignByIDRequest{
+		Id:           campaignId,
+		UserId:       user_id,
+		Title:        title,
+		Description:  description,
+		TargetAmount: target_amount,
+		Deadline:     timestamppb.New(deadline),
+		Status:       campaign_pb.CampaignStatus(campaign_pb.CampaignStatus_value[campaign_status]),
+		Category:     campaign_pb.CampaignCategory(campaign_pb.CampaignCategory_value[campaign_category]),
+		MinDonation:  min_donation,
+	}
+	// Call the GetCampaignByID method
+	res, err := client.UpdateCampaignByID(ctx, req) // Updated method call
+	if err != nil {
+		log.Fatalf("Error calling UpdateCampaignByID: %v", err)
+		return nil, err
+	}
+
+	resCampaign := res.GetUpdatedCampaign()
+	if resCampaign == nil || len(resCampaign) == 0 {
+		return nil, fmt.Errorf("campaign with ID %s not found", campaignId)
+	}
+
+	campaignModel = &campaign_model.CampaignDB{
+		ID:              resCampaign[0].GetId(),
+		UserID:          resCampaign[0].GetUserId(),
+		Title:           resCampaign[0].GetTitle(),
+		Description:     resCampaign[0].GetDescription(),
+		TargetAmount:    resCampaign[0].GetTargetAmount(),
+		CollectedAmount: resCampaign[0].GetCollectedAmount(),
+		Deadline:        resCampaign[0].GetDeadline().AsTime(),
+		Status:          resCampaign[0].GetStatus().String(),
+		Category:        resCampaign[0].GetCategory().String(),
+		MinDonation:     resCampaign[0].GetMinDonation(),
+		CreatedAt:       resCampaign[0].GetCreatedAt().AsTime(),
+		UpdatedAt:       resCampaign[0].GetUpdatedAt().AsTime(),
+	}
+	return campaignModel, nil
 }
 
 func (s *DonationService) GetAllDonations(ctx context.Context, req *pb.GetDonationsRequest) (*pb.GetDonationsResponse, error) {
@@ -216,6 +315,7 @@ func (r *DonationService) UpdateDonation(ctx context.Context, req *pb.DonationRe
 	return response, nil
 }
 
+// Function Transaction
 func (s *DonationService) GetAllTransactions(ctx context.Context, req *pb.GetTransactionRequest) (*pb.GetTransactionResponse, error) {
 	var transactions []model.Transaction
 	if err := config.DB.Find(&transactions).Error; err != nil {
@@ -229,14 +329,9 @@ func (s *DonationService) GetAllTransactions(ctx context.Context, req *pb.GetTra
 
 	// Iterate through each transaction and fetch the associated donation
 	for _, transaction := range transactions {
-		donation, err := s.GetDonationByID(ctx, &pb.DonationIdRequest{Id: int32(transaction.DonationID)})
-		if err != nil {
-			return nil, fmt.Errorf("error getting donation for transaction ID %d: %v", transaction.ID, err)
-		}
-
 		transactionResponse := &pb.Transaction{
 			Id:                 int32(transaction.ID),
-			DonationId:         donation.GetId(),
+			DonationId:         int32(transaction.DonationID),
 			InvoiceId:          transaction.InvoiceID,
 			InvoiceUrl:         transaction.InvoiceURL,
 			InvoiceDescription: transaction.InvoiceDescription,
@@ -302,7 +397,7 @@ func (r *DonationService) CreateTransaction(ctx context.Context, req *pb.Transac
 	}
 
 	// Get User ID from Donation ID
-	donation, err := s.GetDonationByID(ctx, &pb.DonationIdRequest{Id: int32(transaction.DonationID)})
+	donation, err := r.GetDonationByID(ctx, &pb.DonationIdRequest{Id: int32(transaction.DonationID)})
 	if err != nil {
 		response := &pb.TransactionResponse{
 			Message: "Failed to get donation",
@@ -312,6 +407,24 @@ func (r *DonationService) CreateTransaction(ctx context.Context, req *pb.Transac
 	}
 
 	donationUserID := donation.GetUserId()
+
+	//Check campaign
+	// Get the campaign by ID
+	campaignModel, err := GetCampaignByID(fmt.Sprintf("%d", donation.CampaignId))
+	if err != nil {
+		response := &pb.TransactionResponse{
+			Message: "Failed to get campaign",
+			Error:   err.Error(),
+		}
+		return response, err
+	}
+	if campaignModel.Status != "active" {
+		response := &pb.TransactionResponse{
+			Message: "Campaign is not active",
+			Error:   "Campaign is not active",
+		}
+		return response, errors.New("campaign is not active")
+	}
 
 	// Get User details
 	userModel, err := GetUserByID(donationUserID)
@@ -380,27 +493,126 @@ func (r *DonationService) CreateTransaction(ctx context.Context, req *pb.Transac
 }
 
 func (r *DonationService) UpdateTransaction(ctx context.Context, req *pb.TransactionRequest) (*pb.TransactionResponse, error) {
-	donation := &model.Transaction{
+	transaction := &model.Transaction{
 		ID: int(req.GetId()),
 	}
 
-	if err := config.DB.Model(donation).Updates(donation).Error; err != nil {
+	if err := config.DB.Model(transaction).Updates(transaction).Error; err != nil {
 		return nil, err
 	}
 
 	// Create a user response
 	response := &pb.TransactionResponse{
-		Id:                 int32(donation.ID),
-		DonationId:         int32(donation.DonationID),
-		InvoiceId:          donation.InvoiceID,
-		InvoiceUrl:         donation.InvoiceURL,
-		InvoiceDescription: donation.InvoiceDescription,
-		PaymentMethod:      donation.PaymentMethod,
-		Amount:             float32(donation.Amount),
-		Status:             donation.Status,
-		CreatedAt:          donation.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:          donation.UpdatedAt.Format(time.RFC3339),
+		Id:                 int32(transaction.ID),
+		DonationId:         int32(transaction.DonationID),
+		InvoiceId:          transaction.InvoiceID,
+		InvoiceUrl:         transaction.InvoiceURL,
+		InvoiceDescription: transaction.InvoiceDescription,
+		PaymentMethod:      transaction.PaymentMethod,
+		Amount:             float32(transaction.Amount),
+		Status:             transaction.Status,
+		CreatedAt:          transaction.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:          transaction.UpdatedAt.Format(time.RFC3339),
 	}
 
 	return response, nil
+}
+
+func (r *DonationService) SyncTransaction(ctx context.Context, req *pb.TransactionIdRequest) (*pb.TransactionResponse, error) {
+	// Extract the ID from the request
+	id := req.GetId()
+
+	var transaction model.Transaction
+	if err := config.DB.First(&transaction, id).Error; err != nil {
+		return nil, err
+	}
+
+	if transaction.Status == "PENDING" {
+		// Get Invoice details from external service
+		invoice, err := external.GetInvoice(transaction.InvoiceID)
+		if err != nil {
+			response := &pb.TransactionResponse{
+				Message: "Failed to get invoice",
+				Error:   err.Error(),
+			}
+			return response, err
+		}
+		if invoice.Status != "PENDING" {
+			transaction.Status = invoice.Status
+			transaction.InvoiceURL = invoice.InvoiceURL
+			transaction.InvoiceDescription = invoice.Description
+			transaction.UpdatedAt = time.Now()
+
+			if err := config.DB.Save(&transaction).Error; err != nil {
+				response := &pb.TransactionResponse{
+					Message: "Failed to update transaction",
+					Error:   err.Error(),
+				}
+				return response, err
+			}
+
+			if transaction.Status == "PAID" || transaction.Status == "SETTLED" {
+				// Update the donation status to "COMPLETED"
+				var donation model.Donation
+				if err := config.DB.First(&donation, transaction.DonationID).Error; err != nil {
+					response := &pb.TransactionResponse{
+						Message: "Failed to get donation",
+						Error:   err.Error(),
+					}
+					return response, err
+				}
+
+				donation.Status = "COMPLETED"
+				if err := config.DB.Save(&donation).Error; err != nil {
+					response := &pb.TransactionResponse{
+						Message: "Failed to update donation",
+						Error:   err.Error(),
+					}
+					return response, err
+				}
+
+				// Update the campaign
+				//get campaign by ID
+				campaignModel, err := GetCampaignByID(fmt.Sprintf("%d", donation.CampaignID))
+				if err != nil {
+					response := &pb.TransactionResponse{
+						Message: "Failed to get campaign",
+						Error:   err.Error(),
+					}
+					return response, err
+				}
+
+				// update the campaign collected amount
+				campaignModel.CollectedAmount += int32(donation.Amount)
+				campaignModel.UpdatedAt = time.Now()
+				if _, err := UpdateCampaignByID(fmt.Sprintf("%d", campaignModel.ID), int32(campaignModel.UserID), campaignModel.Title, campaignModel.Description, int32(campaignModel.TargetAmount), campaignModel.Deadline, campaignModel.Status, campaignModel.Category, int32(campaignModel.MinDonation)); err != nil {
+					response := &pb.TransactionResponse{
+						Message: "Failed to update campaign",
+						Error:   err.Error(),
+					}
+					return response, err
+				}
+
+			}
+
+		}
+
+	}
+
+	// Create a transaction response
+	response := &pb.TransactionResponse{
+		Id:                 int32(transaction.ID),
+		DonationId:         int32(transaction.DonationID),
+		InvoiceId:          transaction.InvoiceID,
+		InvoiceUrl:         transaction.InvoiceURL,
+		InvoiceDescription: transaction.InvoiceDescription,
+		PaymentMethod:      transaction.PaymentMethod,
+		Amount:             float32(transaction.Amount),
+		Status:             transaction.Status,
+		CreatedAt:          transaction.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:          transaction.UpdatedAt.Format(time.RFC3339),
+	}
+
+	return response, nil
+
 }
