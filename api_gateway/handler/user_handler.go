@@ -10,10 +10,10 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 
-	// "crowdfund/model"
+	"crowdfund/entity"
 	"crowdfund/repository"
-
 	"github.com/rayhanadri/crowdfunding/user-service/model"
+
 )
 
 type UserHandler interface {
@@ -40,13 +40,13 @@ func NewUserHandler(userRepo repository.UserRepository) UserHandler {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Success 200 {object} model.Response
+// @Success 200 {object} entity.Response
 // @Router /users/me [get]
 func (h *userHandler) GetUserByID(c echo.Context) error {
 	// fmt.Println("GetUserByID called")
 	userID := c.Get("user_id")
 	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "User not authenticated",
 		})
@@ -54,7 +54,7 @@ func (h *userHandler) GetUserByID(c echo.Context) error {
 
 	userIdFloat, ok := userID.(float64)
 	if !ok {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Invalid user ID",
 		})
@@ -68,14 +68,14 @@ func (h *userHandler) GetUserByID(c echo.Context) error {
 
 	user, err := h.userRepo.GetUserByID(idInt)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Failed to retrieve user",
 		})
 	}
 
 	user.Password = "" // Clear the password before sending the response
-	return c.JSON(http.StatusOK, model.Response{
+	return c.JSON(http.StatusOK, entity.Response{
 		Status:  http.StatusOK,
 		Message: "Success",
 		Data:    user,
@@ -89,13 +89,13 @@ func (h *userHandler) GetUserByID(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param user body model.UserRegister true "User object"
-// @Success 201 {object} model.Response
+// @Success 201 {object} entity.Response
 // @Router /users/register [post]
 func (h *userHandler) CreateUser(c echo.Context) error {
 
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
 		})
@@ -103,7 +103,7 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 
 	err := user.Validate()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
 		})
@@ -111,14 +111,14 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 
 	user, err = h.userRepo.CreateUser(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Failed to create user, maybe email already exists",
 		})
 	}
 
 	user.Password = "" // Clear the password before sending the response
-	return c.JSON(http.StatusCreated, model.Response{
+	return c.JSON(http.StatusCreated, entity.Response{
 		Status:  http.StatusCreated,
 		Message: "Success",
 		Data:    user,
@@ -132,12 +132,12 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param user body model.UserLogin true "User object"
-// @Success 200 {object} model.Response
+// @Success 200 {object} entity.Response
 // @Router /users/login [post]
 func (h *userHandler) LoginUser(c echo.Context) error {
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
 		})
@@ -150,7 +150,7 @@ func (h *userHandler) LoginUser(c echo.Context) error {
 
 	if err != nil {
 		// fmt.Println("Password mismatch:", err)
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Invalid email or password",
 		})
@@ -158,7 +158,7 @@ func (h *userHandler) LoginUser(c echo.Context) error {
 
 	accessToken, refreshToken, err := GenerateTokens(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Failed to generate tokens" + err.Error(),
 		})
@@ -166,19 +166,19 @@ func (h *userHandler) LoginUser(c echo.Context) error {
 
 	tokenString := accessToken
 	// Parse the token to extract claims
-	token, err := jwt.ParseWithClaims(tokenString, &model.Claims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &entity.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_ACCESS_KEY")), nil
 	})
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "Invalid token",
 		})
 	}
 
-	claims, ok := token.Claims.(*model.Claims)
+	claims, ok := token.Claims.(*entity.Claims)
 	if !ok || !token.Valid {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "Invalid token claims",
 		})
@@ -190,7 +190,7 @@ func (h *userHandler) LoginUser(c echo.Context) error {
 	c.Set("exp", claims.Exp)
 
 	// return the user object
-	return c.JSON(http.StatusOK, model.Response{
+	return c.JSON(http.StatusOK, entity.Response{
 		Status:  http.StatusOK,
 		Message: "Login successful",
 		Data: map[string]interface{}{
@@ -208,13 +208,13 @@ func (h *userHandler) LoginUser(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Success 200 {object} model.Response
+// @Success 200 {object} entity.Response
 // @Router /users/refresh-token [post] // Updated the router path to use POST method
 func (h *userHandler) RefreshToken(c echo.Context) error {
 	// Get the refresh token from the request header
 	refreshToken := c.Request().Header.Get("Authorization")
 	if refreshToken == "" {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "Missing refresh token",
 		})
@@ -222,19 +222,19 @@ func (h *userHandler) RefreshToken(c echo.Context) error {
 
 	// Parse the refresh token to extract claims
 	refreshToken = strings.TrimPrefix(refreshToken, "Bearer ")
-	token, err := jwt.ParseWithClaims(refreshToken, &model.Claims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, &entity.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_REFRESH_KEY")), nil
 	})
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "Invalid refresh token",
 		})
 	}
 
-	claims, ok := token.Claims.(*model.Claims)
+	claims, ok := token.Claims.(*entity.Claims)
 	if !ok || !token.Valid {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "Invalid token claims",
 		})
@@ -244,7 +244,7 @@ func (h *userHandler) RefreshToken(c echo.Context) error {
 
 	user, err := h.userRepo.GetUserByID(userID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Failed to retrieve user",
 		})
@@ -252,7 +252,7 @@ func (h *userHandler) RefreshToken(c echo.Context) error {
 
 	newAccessToken, newRefreshToken, err := GenerateTokens(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Failed to generate new tokens",
 		})
@@ -261,7 +261,7 @@ func (h *userHandler) RefreshToken(c echo.Context) error {
 	// remove password from user object before sending response
 	user.Password = "" // Clear the password before sending the response
 
-	return c.JSON(http.StatusOK, model.Response{
+	return c.JSON(http.StatusOK, entity.Response{
 		Status:  http.StatusOK,
 		Message: "Tokens refreshed successfully",
 		Data: map[string]interface{}{
@@ -274,7 +274,7 @@ func (h *userHandler) RefreshToken(c echo.Context) error {
 
 // Create Refresh Token
 func GenerateTokens(user *model.User) (string, string, error) {
-	accessClaims := model.Claims{
+	accessClaims := entity.Claims{
 		UserID: user.ID,
 		Email:  user.Email,
 		Exp:    float64(time.Now().Add(time.Hour * 24).Unix()), // Token expires in 24 hours
@@ -287,7 +287,7 @@ func GenerateTokens(user *model.User) (string, string, error) {
 	}
 
 	// Refresh Token (7 days)
-	refreshClaims := model.Claims{
+	refreshClaims := entity.Claims{
 		UserID: user.ID,
 		Email:  user.Email,
 		Exp:    float64(time.Now().Add(time.Hour * 24).Unix()),
@@ -308,12 +308,12 @@ func GenerateTokens(user *model.User) (string, string, error) {
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param user body model.UserRegister true "User object"
-// @Success 200 {object} model.Response
+// @Success 200 {object} entity.Response
 // @Router /users/me [put] // Updated the router path to include user ID
 func (h *userHandler) UpdateUser(c echo.Context) error {
 	userID := c.Get("user_id")
 	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "User not authenticated",
 		})
@@ -321,7 +321,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 
 	userIdFloat, ok := userID.(float64)
 	if !ok {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Invalid user ID",
 		})
@@ -332,7 +332,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
 		})
@@ -345,7 +345,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 	}
 
 	updatedUser.Password = "" // Clear the password before sending the response
-	return c.JSON(http.StatusOK, model.Response{
+	return c.JSON(http.StatusOK, entity.Response{
 		Status:  http.StatusOK,
 		Message: "User updated successfully",
 		Data: map[string]interface{}{
