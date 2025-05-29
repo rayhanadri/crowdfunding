@@ -1,8 +1,8 @@
 package main
 
 import (
-	"crowdfund/config" // Import the config package
-	"crowdfund/route"  // Import the route package
+	"github.com/rayhanadri/crowdfunding/api-gateway/config" // Import the config package
+	"github.com/rayhanadri/crowdfunding/api-gateway/route"  // Import the route package
 )
 
 func init() {

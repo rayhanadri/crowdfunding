@@ -5,8 +5,9 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/rayhanadri/crowdfunding/donation-service/model"
 
-	"github.com/rayhanadri/crowdfunding/api-gateway/model"
+	"github.com/rayhanadri/crowdfunding/api-gateway/entity"
 	"github.com/rayhanadri/crowdfunding/api-gateway/repository"
 )
 
@@ -32,35 +33,26 @@ func NewDonationHandler(donationRepo repository.DonationRepository) DonationHand
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Success 200 {object} model.Response
+// @Success 200 {object} entity.Response
 // @Router /donations/{id} [get]
 func (h *donationHandler) GetAllDonations(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
 	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "User not authenticated",
 		})
 	}
 
-	userIdFloat, ok := userID.(float64)
-	if !ok {
-		return c.JSON(http.StatusBadRequest, model.Response{
-			Status:  http.StatusBadRequest,
-			Message: "Invalid user ID",
-		})
-	}
-	userIdInt := int(userIdFloat)
-
-	donations, err := h.donationRepo.GetAllDonations(userIdInt)
+	donations, err := h.donationRepo.GetAllDonations()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusInternalServerError, entity.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Internal Server Error",
 		})
 	}
-	return c.JSON(200, model.Response{
+	return c.JSON(200, entity.Response{
 		Status:  200,
 		Message: "Success",
 		Data:    donations,
@@ -74,14 +66,14 @@ func (h *donationHandler) GetAllDonations(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Param model.Donation body model.Donation true "Donation object"
-// @Success 201 {object} model.Response
+// @Param entity.Donation body entity.Donation true "Donation object" // Updated to use the correct package
+// @Success 201 {object} entity.Response
 // @Router /donations [post] // Updated the router path to use POST method
 func (h *donationHandler) CreateDonation(c echo.Context) error {
 	//
 	userID := c.Get("user_id")
 	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "User not authenticated",
 		})
@@ -89,7 +81,7 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 
 	userIdFloat, ok := userID.(float64)
 	if !ok {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  http.StatusBadRequest,
 			Message: "Invalid user ID",
 		})
@@ -98,7 +90,7 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 	userIdInt := int(userIdFloat)
 
 	if userIdInt == 0 {
-		return c.JSON(403, model.Response{
+		return c.JSON(403, entity.Response{
 			Status:  403,
 			Message: "Forbidden",
 		})
@@ -106,7 +98,7 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 
 	donation := new(model.Donation)
 	if err := c.Bind(donation); err != nil {
-		return c.JSON(400, model.Response{
+		return c.JSON(400, entity.Response{
 			Status:  400,
 			Message: "Bad Request, Invalid request body" + err.Error(),
 		})
@@ -114,7 +106,7 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 
 	// Validate donation data
 	if donation.Amount <= 0 {
-		return c.JSON(400, model.Response{
+		return c.JSON(400, entity.Response{
 			Status:  400,
 			Message: "Invalid donation amount",
 		})
@@ -122,22 +114,22 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 
 	// Validate campaign ID
 	if donation.CampaignID <= 0 {
-		return c.JSON(400, model.Response{
+		return c.JSON(400, entity.Response{
 			Status:  400,
 			Message: "Invalid campaign ID",
 		})
 	}
 
-	donation, err := h.donationRepo.CreateDonation(userIdInt, donation)
+	donation, err := h.donationRepo.CreateDonation(donation)
 	if err != nil {
-		return c.JSON(500, model.Response{
+		return c.JSON(500, entity.Response{
 			Status:  500,
 			Message: "Internal Server Error, " + err.Error(),
 		})
 	}
 
 	// return response
-	return c.JSON(201, model.Response{
+	return c.JSON(201, entity.Response{
 		Status:  201,
 		Message: "Success",
 		Data:    donation,
@@ -152,33 +144,24 @@ func (h *donationHandler) CreateDonation(c echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param id path int true "Donation ID"
-// @Param model.Donation body model.Donation true "Donation object"
-// @Success 200 {object} model.Response
+// @Param entity.Donation body entity.Donation true "Donation object"
+// @Success 200 {object} entity.Response
 // @Router /donations/{id} [put] // Updated the router path to use PUT method
 func (h *donationHandler) UpdateDonation(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
 	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "User not authenticated",
 		})
 	}
 
-	userIdFloat, ok := userID.(float64)
-	if !ok {
-		return c.JSON(http.StatusBadRequest, model.Response{
-			Status:  http.StatusBadRequest,
-			Message: "Invalid user ID",
-		})
-	}
-	userIdInt := int(userIdFloat)
-
 	//get donation id from param
 	donationID := c.Param("id")
 	donationIdInt, err := strconv.Atoi(donationID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  http.StatusBadRequest,
 			Message: "Invalid donation ID",
 		})
@@ -187,23 +170,23 @@ func (h *donationHandler) UpdateDonation(c echo.Context) error {
 	// get stored donation
 	donation := new(model.Donation)
 	if err := c.Bind(donation); err != nil {
-		return c.JSON(400, model.Response{
+		return c.JSON(400, entity.Response{
 			Status:  400,
 			Message: "Bad Request, Invalid request body" + err.Error(),
 		})
 	}
-	donation.ID = donationIdInt
 
-	donation, err = h.donationRepo.UpdateDonation(userIdInt, donation)
+	donation.ID = donationIdInt
+	donation, err = h.donationRepo.UpdateDonation(donation)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, model.Response{
+		return c.JSON(http.StatusNotFound, entity.Response{
 			Status:  http.StatusNotFound,
 			Message: "Donation not found",
 		})
 	}
 
 	// return updated donation
-	return c.JSON(200, model.Response{
+	return c.JSON(200, entity.Response{
 		Status:  200,
 		Message: "Success",
 		Data:    donation,
@@ -218,39 +201,30 @@ func (h *donationHandler) UpdateDonation(c echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
 // @Param id path int true "Donation ID"
-// @Success 200 {object} model.Response
+// @Success 200 {object} entity.Response
 // @Router /donations/{id} [get] // Updated the router path to include donation ID
 func (h *donationHandler) GetDonationByID(c echo.Context) error {
 	//get user id from context
 	userID := c.Get("user_id")
 	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, model.Response{
+		return c.JSON(http.StatusUnauthorized, entity.Response{
 			Status:  http.StatusUnauthorized,
 			Message: "User not authenticated",
 		})
 	}
 
-	userIdFloat, ok := userID.(float64)
-	if !ok {
-		return c.JSON(http.StatusBadRequest, model.Response{
-			Status:  http.StatusBadRequest,
-			Message: "Invalid user ID",
-		})
-	}
-	userIdInt := int(userIdFloat)
-
 	// get donation id from url param
 	donationID := c.Param("id")
 	// log.Println("donationID", donationID)
 	if donationID == "" {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  400,
 			Message: "Donation ID is required",
 		})
 	}
 	donationIDInt, err := strconv.Atoi(donationID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.Response{
+		return c.JSON(http.StatusBadRequest, entity.Response{
 			Status:  400,
 			Message: "Invalid donation ID",
 		})
@@ -258,17 +232,16 @@ func (h *donationHandler) GetDonationByID(c echo.Context) error {
 
 	// get stored donation data
 	donation := new(model.Donation)
-	result, err := h.donationRepo.GetDonationByID(userIdInt, donationIDInt)
+	result, err := h.donationRepo.GetDonationByID(donationIDInt)
 	if err != nil {
-		return c.JSON(500, model.Response{
+		return c.JSON(500, entity.Response{
 			Status:  500,
 			Message: "Internal Server Error, Error when getting donation",
 		})
 	}
-
 	donation = result
 
-	return c.JSON(200, model.Response{
+	return c.JSON(200, entity.Response{
 		Status:  200,
 		Message: "Success",
 		Data:    donation,

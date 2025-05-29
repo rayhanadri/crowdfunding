@@ -68,7 +68,7 @@ func GetUserByID(userId int32) (userModel *user_model.User, error error) {
 }
 
 func GetCampaignByID(campaignId string) (campaignModel *campaign_model.CampaignDB, error error) {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("user-service-273575294549.asia-southeast2.run.app:443", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}

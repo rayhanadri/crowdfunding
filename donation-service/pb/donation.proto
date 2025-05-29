@@ -102,8 +102,8 @@ message Transaction {
   string updated_at = 10;
 }
 
-message GetTransactionRequest {}
+message GetTransactionsRequest {}
 
-message GetTransactionResponse {
+message GetTransactionsResponse {
   repeated Transaction transactions = 1;
 }

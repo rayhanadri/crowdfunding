@@ -16,32 +16,32 @@ type MockDonationRepository struct {
 	mock.Mock
 }
 
-func (m *MockDonationRepository) GetAllDonation(user_id int) (*[]model.Donation, error) {
-	args := m.Called(user_id)
+func (m *MockDonationRepository) GetAllDonation() (*[]model.Donation, error) {
+	args := m.Called()
 	if donations := args.Get(0); donations != nil {
 		return donations.(*[]model.Donation), args.Error(1)
 	}
 	return nil, args.Error(1)
 }
 
-func (m *MockDonationRepository) CreateDonation(user_id int, donation *model.Donation) (*model.Donation, error) {
-	args := m.Called(user_id, donation)
+func (m *MockDonationRepository) CreateDonation(donation *model.Donation) (*model.Donation, error) {
+	args := m.Called(donation)
 	if donation := args.Get(0); donation != nil {
 		return donation.(*model.Donation), args.Error(1)
 	}
 	return nil, args.Error(1)
 }
 
-func (m *MockDonationRepository) GetDonationByID(user_id int, donationID int) (*model.Donation, error) {
-	args := m.Called(user_id, donationID)
+func (m *MockDonationRepository) GetDonationByID(donationID int) (*model.Donation, error) {
+	args := m.Called(donationID)
 	if donation := args.Get(0); donation != nil {
 		return donation.(*model.Donation), args.Error(1)
 	}
 	return nil, args.Error(1)
 }
 
-func (m *MockDonationRepository) UpdateDonation(user_id int, donation *model.Donation) (*model.Donation, error) {
-	args := m.Called(user_id, donation)
+func (m *MockDonationRepository) UpdateDonation(donation *model.Donation) (*model.Donation, error) {
+	args := m.Called(donation)
 	if donation := args.Get(0); donation != nil {
 		return donation.(*model.Donation), args.Error(1)
 	}

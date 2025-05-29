@@ -1,8 +1,7 @@
 package repository
 
 import (
-	"crowdfund/model"
-
+	"github.com/rayhanadri/crowdfunding/user-service/model"
 	"github.com/stretchr/testify/mock"
 )
 

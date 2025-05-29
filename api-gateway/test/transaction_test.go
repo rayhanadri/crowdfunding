@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rayhanadri/crowdfunding/donation-service/model"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/rayhanadri/crowdfunding/api-gateway/model"
 	"github.com/rayhanadri/crowdfunding/api-gateway/repository"
 )
 

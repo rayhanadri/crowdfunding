@@ -32,11 +32,11 @@
                     },
                     {
                         "description": "Donation object",
-                        "name": "model.Donation",
+                        "name": "entity.Donation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Donation"
+                            "$ref": "#/definitions/entity.Donation"
                         }
                     }
                 ],
@@ -44,7 +44,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -83,7 +83,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -121,7 +121,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Donation"
+                            "$ref": "#/definitions/entity.Donation"
                         }
                     }
                 ],
@@ -129,7 +129,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -162,7 +162,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/entity.Transaction"
                         }
                     }
                 ],
@@ -170,7 +170,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -210,7 +210,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/entity.Transaction"
                         }
                     }
                 ],
@@ -218,7 +218,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -257,7 +257,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -295,7 +295,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/entity.Transaction"
                         }
                     }
                 ],
@@ -303,7 +303,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -329,7 +329,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserLogin"
+                            "$ref": "#/definitions/entity.UserLogin"
                         }
                     }
                 ],
@@ -337,7 +337,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -369,7 +369,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -400,7 +400,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRegister"
+                            "$ref": "#/definitions/entity.UserRegister"
                         }
                     }
                 ],
@@ -408,7 +408,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -440,7 +440,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -466,7 +466,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRegister"
+                            "$ref": "#/definitions/entity.UserRegister"
                         }
                     }
                 ],
@@ -474,7 +474,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -482,7 +482,7 @@
         }
     },
     "definitions": {
-        "model.Campaign": {
+        "entity.Campaign": {
             "type": "object",
             "properties": {
                 "category": {
@@ -519,21 +519,21 @@
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/model.User"
+                    "$ref": "#/definitions/entity.User"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "model.Donation": {
+        "entity.Donation": {
             "type": "object",
             "properties": {
                 "amount": {
                     "type": "number"
                 },
                 "campaign": {
-                    "$ref": "#/definitions/model.Campaign"
+                    "$ref": "#/definitions/entity.Campaign"
                 },
                 "campaign_id": {
                     "type": "integer"
@@ -554,14 +554,14 @@
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/model.User"
+                    "$ref": "#/definitions/entity.User"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "model.Response": {
+        "entity.Response": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -573,7 +573,7 @@
                 }
             }
         },
-        "model.Transaction": {
+        "entity.Transaction": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -583,7 +583,7 @@
                     "type": "string"
                 },
                 "donation": {
-                    "$ref": "#/definitions/model.Donation"
+                    "$ref": "#/definitions/entity.Donation"
                 },
                 "donation_id": {
                     "type": "integer"
@@ -611,7 +611,7 @@
                 }
             }
         },
-        "model.User": {
+        "entity.User": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -634,7 +634,7 @@
                 }
             }
         },
-        "model.UserLogin": {
+        "entity.UserLogin": {
             "type": "object",
             "properties": {
                 "email": {
@@ -645,7 +645,7 @@
                 }
             }
         },
-        "model.UserRegister": {
+        "entity.UserRegister": {
             "type": "object",
             "properties": {
                 "email": {

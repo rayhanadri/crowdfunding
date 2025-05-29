@@ -87,7 +87,7 @@ func (h *userHandler) GetUserByID(c echo.Context) error {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body model.UserRegister true "User object"
+// @Param user body entity.UserRegister true "User object"
 // @Success 201 {object} entity.Response
 // @Router /users/register [post]
 func (h *userHandler) CreateUser(c echo.Context) error {
@@ -130,7 +130,7 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body model.UserLogin true "User object"
+// @Param user body entity.UserLogin true "User object"
 // @Success 200 {object} entity.Response
 // @Router /users/login [post]
 func (h *userHandler) LoginUser(c echo.Context) error {
@@ -306,7 +306,7 @@ func GenerateTokens(user *model.User) (string, string, error) {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <access_token>"
-// @Param user body model.UserRegister true "User object"
+// @Param user body entity.UserRegister true "User object"
 // @Success 200 {object} entity.Response
 // @Router /users/me [put] // Updated the router path to include user ID
 func (h *userHandler) UpdateUser(c echo.Context) error {

@@ -1,6 +1,6 @@
 basePath: /api/v1/
 definitions:
-  model.Campaign:
+  entity.Campaign:
     properties:
       category:
         type: string
@@ -25,16 +25,16 @@ definitions:
       updated_at:
         type: string
       user:
-        $ref: '#/definitions/model.User'
+        $ref: '#/definitions/entity.User'
       user_id:
         type: integer
     type: object
-  model.Donation:
+  entity.Donation:
     properties:
       amount:
         type: number
       campaign:
-        $ref: '#/definitions/model.Campaign'
+        $ref: '#/definitions/entity.Campaign'
       campaign_id:
         type: integer
       created_at:
@@ -48,11 +48,11 @@ definitions:
       updated_at:
         type: string
       user:
-        $ref: '#/definitions/model.User'
+        $ref: '#/definitions/entity.User'
       user_id:
         type: integer
     type: object
-  model.Response:
+  entity.Response:
     properties:
       data: {}
       message:
@@ -60,14 +60,14 @@ definitions:
       status:
         type: integer
     type: object
-  model.Transaction:
+  entity.Transaction:
     properties:
       amount:
         type: number
       created_at:
         type: string
       donation:
-        $ref: '#/definitions/model.Donation'
+        $ref: '#/definitions/entity.Donation'
       donation_id:
         type: integer
       id:
@@ -85,7 +85,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.User:
+  entity.User:
     properties:
       created_at:
         type: string
@@ -100,14 +100,14 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.UserLogin:
+  entity.UserLogin:
     properties:
       email:
         type: string
       password:
         type: string
     type: object
-  model.UserRegister:
+  entity.UserRegister:
     properties:
       email:
         type: string
@@ -136,17 +136,17 @@ paths:
         type: string
       - description: Donation object
         in: body
-        name: model.Donation
+        name: entity.Donation
         required: true
         schema:
-          $ref: '#/definitions/model.Donation'
+          $ref: '#/definitions/entity.Donation'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Create a new donation
       tags:
       - donations
@@ -172,7 +172,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Get Donation details by Donation ID
       tags:
       - donations
@@ -196,14 +196,14 @@ paths:
         name: model.Donation
         required: true
         schema:
-          $ref: '#/definitions/model.Donation'
+          $ref: '#/definitions/entity.Donation'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Update a donation based on the invoice status
       tags:
       - donations
@@ -223,14 +223,14 @@ paths:
         name: model.Transaction
         required: true
         schema:
-          $ref: '#/definitions/model.Transaction'
+          $ref: '#/definitions/entity.Transaction'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Create a new transaction
       tags:
       - transactions
@@ -256,7 +256,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Get Transaction details by Transaction ID
       tags:
       - transactions
@@ -280,14 +280,14 @@ paths:
         name: model.Transaction
         required: true
         schema:
-          $ref: '#/definitions/model.Transaction'
+          $ref: '#/definitions/entity.Transaction'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Update a transaction based on the invoice status
       tags:
       - transactions
@@ -312,14 +312,14 @@ paths:
         name: model.Transaction
         required: true
         schema:
-          $ref: '#/definitions/model.Transaction'
+          $ref: '#/definitions/entity.Transaction'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Check and update a transaction based on the invoice status
       tags:
       - transactions
@@ -334,14 +334,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/model.UserLogin'
+          $ref: '#/definitions/entity.UserLogin'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Login user
       tags:
       - users
@@ -362,7 +362,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Get Current User Details
       tags:
       - users
@@ -381,14 +381,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/model.UserRegister'
+          $ref: '#/definitions/entity.UserRegister'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Update user details
       tags:
       - users
@@ -409,7 +409,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Refresh user access token
       tags:
       - users
@@ -424,14 +424,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/model.UserRegister'
+          $ref: '#/definitions/entity.UserRegister'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Response'
+            $ref: '#/definitions/entity.Response'
       summary: Register a new user
       tags:
       - users

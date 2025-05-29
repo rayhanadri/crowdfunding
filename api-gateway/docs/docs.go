@@ -38,11 +38,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Donation object",
-                        "name": "model.Donation",
+                        "name": "entity.Donation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Donation"
+                            "$ref": "#/definitions/entity.Donation"
                         }
                     }
                 ],
@@ -50,7 +50,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -89,7 +89,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -127,7 +127,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Donation"
+                            "$ref": "#/definitions/entity.Donation"
                         }
                     }
                 ],
@@ -135,7 +135,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -168,7 +168,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/entity.Transaction"
                         }
                     }
                 ],
@@ -176,7 +176,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -216,7 +216,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/entity.Transaction"
                         }
                     }
                 ],
@@ -224,7 +224,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -263,7 +263,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -301,7 +301,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/entity.Transaction"
                         }
                     }
                 ],
@@ -309,7 +309,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -335,7 +335,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserLogin"
+                            "$ref": "#/definitions/entity.UserLogin"
                         }
                     }
                 ],
@@ -343,7 +343,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -375,7 +375,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -406,7 +406,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRegister"
+                            "$ref": "#/definitions/entity.UserRegister"
                         }
                     }
                 ],
@@ -414,7 +414,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -446,7 +446,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -472,7 +472,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRegister"
+                            "$ref": "#/definitions/entity.UserRegister"
                         }
                     }
                 ],
@@ -480,7 +480,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "$ref": "#/definitions/entity.Response"
                         }
                     }
                 }
@@ -488,7 +488,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.Campaign": {
+        "entity.Campaign": {
             "type": "object",
             "properties": {
                 "category": {
@@ -525,21 +525,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/model.User"
+                    "$ref": "#/definitions/entity.User"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "model.Donation": {
+        "entity.Donation": {
             "type": "object",
             "properties": {
                 "amount": {
                     "type": "number"
                 },
                 "campaign": {
-                    "$ref": "#/definitions/model.Campaign"
+                    "$ref": "#/definitions/entity.Campaign"
                 },
                 "campaign_id": {
                     "type": "integer"
@@ -560,14 +560,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/model.User"
+                    "$ref": "#/definitions/entity.User"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "model.Response": {
+        "entity.Response": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -579,7 +579,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Transaction": {
+        "entity.Transaction": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -589,7 +589,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "donation": {
-                    "$ref": "#/definitions/model.Donation"
+                    "$ref": "#/definitions/entity.Donation"
                 },
                 "donation_id": {
                     "type": "integer"
@@ -617,7 +617,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.User": {
+        "entity.User": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -640,7 +640,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserLogin": {
+        "entity.UserLogin": {
             "type": "object",
             "properties": {
                 "email": {
@@ -651,7 +651,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserRegister": {
+        "entity.UserRegister": {
             "type": "object",
             "properties": {
                 "email": {
