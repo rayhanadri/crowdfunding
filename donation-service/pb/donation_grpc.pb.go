@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DonationService_GetDonationByID_FullMethodName     = "/donation.DonationService/GetDonationByID"
-	DonationService_GetAllDonations_FullMethodName     = "/donation.DonationService/GetAllDonations"
-	DonationService_CreateDonation_FullMethodName      = "/donation.DonationService/CreateDonation"
-	DonationService_UpdateDonation_FullMethodName      = "/donation.DonationService/UpdateDonation"
-	DonationService_GetTransactionByID_FullMethodName  = "/donation.DonationService/GetTransactionByID"
-	DonationService_GetAllTransactionss_FullMethodName = "/donation.DonationService/GetAllTransactionss"
-	DonationService_CreateTransaction_FullMethodName   = "/donation.DonationService/CreateTransaction"
-	DonationService_UpdateTransaction_FullMethodName   = "/donation.DonationService/UpdateTransaction"
+	DonationService_GetDonationByID_FullMethodName    = "/donation.DonationService/GetDonationByID"
+	DonationService_GetAllDonations_FullMethodName    = "/donation.DonationService/GetAllDonations"
+	DonationService_CreateDonation_FullMethodName     = "/donation.DonationService/CreateDonation"
+	DonationService_UpdateDonation_FullMethodName     = "/donation.DonationService/UpdateDonation"
+	DonationService_GetTransactionByID_FullMethodName = "/donation.DonationService/GetTransactionByID"
+	DonationService_GetAllTransactions_FullMethodName = "/donation.DonationService/GetAllTransactions"
+	DonationService_CreateTransaction_FullMethodName  = "/donation.DonationService/CreateTransaction"
+	DonationService_UpdateTransaction_FullMethodName  = "/donation.DonationService/UpdateTransaction"
 )
 
 // DonationServiceClient is the client API for DonationService service.
@@ -38,7 +38,7 @@ type DonationServiceClient interface {
 	CreateDonation(ctx context.Context, in *DonationRequest, opts ...grpc.CallOption) (*DonationResponse, error)
 	UpdateDonation(ctx context.Context, in *DonationRequest, opts ...grpc.CallOption) (*DonationResponse, error)
 	GetTransactionByID(ctx context.Context, in *TransactionIdRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
-	GetAllTransactionss(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
+	GetAllTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error)
 	CreateTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 	UpdateTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 }
@@ -101,10 +101,10 @@ func (c *donationServiceClient) GetTransactionByID(ctx context.Context, in *Tran
 	return out, nil
 }
 
-func (c *donationServiceClient) GetAllTransactionss(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error) {
+func (c *donationServiceClient) GetAllTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTransactionResponse)
-	err := c.cc.Invoke(ctx, DonationService_GetAllTransactionss_FullMethodName, in, out, cOpts...)
+	out := new(GetTransactionsResponse)
+	err := c.cc.Invoke(ctx, DonationService_GetAllTransactions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ type DonationServiceServer interface {
 	CreateDonation(context.Context, *DonationRequest) (*DonationResponse, error)
 	UpdateDonation(context.Context, *DonationRequest) (*DonationResponse, error)
 	GetTransactionByID(context.Context, *TransactionIdRequest) (*TransactionResponse, error)
-	GetAllTransactionss(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
+	GetAllTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error)
 	CreateTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
 	UpdateTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
 	mustEmbedUnimplementedDonationServiceServer()
@@ -168,8 +168,8 @@ func (UnimplementedDonationServiceServer) UpdateDonation(context.Context, *Donat
 func (UnimplementedDonationServiceServer) GetTransactionByID(context.Context, *TransactionIdRequest) (*TransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionByID not implemented")
 }
-func (UnimplementedDonationServiceServer) GetAllTransactionss(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllTransactionss not implemented")
+func (UnimplementedDonationServiceServer) GetAllTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllTransactions not implemented")
 }
 func (UnimplementedDonationServiceServer) CreateTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTransaction not implemented")
@@ -288,20 +288,20 @@ func _DonationService_GetTransactionByID_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DonationService_GetAllTransactionss_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransactionRequest)
+func _DonationService_GetAllTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DonationServiceServer).GetAllTransactionss(ctx, in)
+		return srv.(DonationServiceServer).GetAllTransactions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DonationService_GetAllTransactionss_FullMethodName,
+		FullMethod: DonationService_GetAllTransactions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DonationServiceServer).GetAllTransactionss(ctx, req.(*GetTransactionRequest))
+		return srv.(DonationServiceServer).GetAllTransactions(ctx, req.(*GetTransactionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -370,8 +370,8 @@ var DonationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DonationService_GetTransactionByID_Handler,
 		},
 		{
-			MethodName: "GetAllTransactionss",
-			Handler:    _DonationService_GetAllTransactionss_Handler,
+			MethodName: "GetAllTransactions",
+			Handler:    _DonationService_GetAllTransactions_Handler,
 		},
 		{
 			MethodName: "CreateTransaction",

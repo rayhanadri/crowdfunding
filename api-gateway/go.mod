@@ -7,8 +7,8 @@ require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.13.3
-	github.com/rayhanadri/crowdfunding/donation-service v0.0.0-20250529053710-29b8b1496b63
-	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250528125612-c04d7843add2
+	github.com/rayhanadri/crowdfunding/donation-service v0.0.0-20250529060202-1e5e3408805f
+	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250529060202-1e5e3408805f
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.4
@@ -48,7 +48,7 @@ require (
 	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	golang.org/x/tools v0.33.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250528174236-200df99c418a // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

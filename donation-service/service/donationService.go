@@ -316,14 +316,14 @@ func (r *DonationService) UpdateDonation(ctx context.Context, req *pb.DonationRe
 }
 
 // Function Transaction
-func (s *DonationService) GetAllTransactions(ctx context.Context, req *pb.GetTransactionRequest) (*pb.GetTransactionResponse, error) {
+func (s *DonationService) GetAllTransactions(ctx context.Context, req *pb.GetTransactionsRequest) (*pb.GetTransactionsResponse, error) {
 	var transactions []model.Transaction
 	if err := config.DB.Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 
 	// Create a donation response
-	response := &pb.GetTransactionResponse{
+	response := &pb.GetTransactionsResponse{
 		Transactions: make([]*pb.Transaction, 0, len(transactions)),
 	}
 

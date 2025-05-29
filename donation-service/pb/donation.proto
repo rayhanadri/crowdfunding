@@ -11,7 +11,7 @@ service DonationService {
   rpc UpdateDonation(DonationRequest) returns (DonationResponse);
 
   rpc GetTransactionByID(TransactionIdRequest) returns (TransactionResponse);
-  rpc GetAllTransactionss(GetTransactionRequest) returns (GetTransactionResponse);
+  rpc GetAllTransactions(GetTransactionsRequest) returns (GetTransactionsResponse);
   rpc CreateTransaction(TransactionRequest) returns (TransactionResponse);
   rpc UpdateTransaction(TransactionRequest) returns (TransactionResponse);
 }

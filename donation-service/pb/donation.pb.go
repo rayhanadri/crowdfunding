@@ -837,26 +837,26 @@ func (x *Transaction) GetUpdatedAt() string {
 	return ""
 }
 
-type GetTransactionRequest struct {
+type GetTransactionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetTransactionRequest) Reset() {
-	*x = GetTransactionRequest{}
+func (x *GetTransactionsRequest) Reset() {
+	*x = GetTransactionsRequest{}
 	mi := &file_pb_donation_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetTransactionRequest) String() string {
+func (x *GetTransactionsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetTransactionRequest) ProtoMessage() {}
+func (*GetTransactionsRequest) ProtoMessage() {}
 
-func (x *GetTransactionRequest) ProtoReflect() protoreflect.Message {
+func (x *GetTransactionsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_pb_donation_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -868,32 +868,32 @@ func (x *GetTransactionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTransactionRequest.ProtoReflect.Descriptor instead.
-func (*GetTransactionRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetTransactionsRequest.ProtoReflect.Descriptor instead.
+func (*GetTransactionsRequest) Descriptor() ([]byte, []int) {
 	return file_pb_donation_proto_rawDescGZIP(), []int{10}
 }
 
-type GetTransactionResponse struct {
+type GetTransactionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Transactions  []*Transaction         `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetTransactionResponse) Reset() {
-	*x = GetTransactionResponse{}
+func (x *GetTransactionsResponse) Reset() {
+	*x = GetTransactionsResponse{}
 	mi := &file_pb_donation_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetTransactionResponse) String() string {
+func (x *GetTransactionsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetTransactionResponse) ProtoMessage() {}
+func (*GetTransactionsResponse) ProtoMessage() {}
 
-func (x *GetTransactionResponse) ProtoReflect() protoreflect.Message {
+func (x *GetTransactionsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_pb_donation_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -905,12 +905,12 @@ func (x *GetTransactionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTransactionResponse.ProtoReflect.Descriptor instead.
-func (*GetTransactionResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetTransactionsResponse.ProtoReflect.Descriptor instead.
+func (*GetTransactionsResponse) Descriptor() ([]byte, []int) {
 	return file_pb_donation_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetTransactionResponse) GetTransactions() []*Transaction {
+func (x *GetTransactionsResponse) GetTransactions() []*Transaction {
 	if x != nil {
 		return x.Transactions
 	}
@@ -1007,17 +1007,17 @@ const file_pb_donation_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\tR\tupdatedAt\"\x17\n" +
-	"\x15GetTransactionRequest\"S\n" +
-	"\x16GetTransactionResponse\x129\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x15.donation.TransactionR\ftransactions2\x94\x05\n" +
+	" \x01(\tR\tupdatedAt\"\x18\n" +
+	"\x16GetTransactionsRequest\"T\n" +
+	"\x17GetTransactionsResponse\x129\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x15.donation.TransactionR\ftransactions2\x95\x05\n" +
 	"\x0fDonationService\x12J\n" +
 	"\x0fGetDonationByID\x12\x1b.donation.DonationIdRequest\x1a\x1a.donation.DonationResponse\x12P\n" +
 	"\x0fGetAllDonations\x12\x1d.donation.GetDonationsRequest\x1a\x1e.donation.GetDonationsResponse\x12G\n" +
 	"\x0eCreateDonation\x12\x19.donation.DonationRequest\x1a\x1a.donation.DonationResponse\x12G\n" +
 	"\x0eUpdateDonation\x12\x19.donation.DonationRequest\x1a\x1a.donation.DonationResponse\x12S\n" +
-	"\x12GetTransactionByID\x12\x1e.donation.TransactionIdRequest\x1a\x1d.donation.TransactionResponse\x12X\n" +
-	"\x13GetAllTransactionss\x12\x1f.donation.GetTransactionRequest\x1a .donation.GetTransactionResponse\x12P\n" +
+	"\x12GetTransactionByID\x12\x1e.donation.TransactionIdRequest\x1a\x1d.donation.TransactionResponse\x12Y\n" +
+	"\x12GetAllTransactions\x12 .donation.GetTransactionsRequest\x1a!.donation.GetTransactionsResponse\x12P\n" +
 	"\x11CreateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponse\x12P\n" +
 	"\x11UpdateTransaction\x12\x1c.donation.TransactionRequest\x1a\x1d.donation.TransactionResponseB\x05Z\x03/pbb\x06proto3"
 
@@ -1035,28 +1035,28 @@ func file_pb_donation_proto_rawDescGZIP() []byte {
 
 var file_pb_donation_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_pb_donation_proto_goTypes = []any{
-	(*DonationIdRequest)(nil),      // 0: donation.DonationIdRequest
-	(*DonationRequest)(nil),        // 1: donation.DonationRequest
-	(*DonationResponse)(nil),       // 2: donation.DonationResponse
-	(*Donation)(nil),               // 3: donation.Donation
-	(*GetDonationsRequest)(nil),    // 4: donation.GetDonationsRequest
-	(*GetDonationsResponse)(nil),   // 5: donation.GetDonationsResponse
-	(*TransactionIdRequest)(nil),   // 6: donation.TransactionIdRequest
-	(*TransactionRequest)(nil),     // 7: donation.TransactionRequest
-	(*TransactionResponse)(nil),    // 8: donation.TransactionResponse
-	(*Transaction)(nil),            // 9: donation.Transaction
-	(*GetTransactionRequest)(nil),  // 10: donation.GetTransactionRequest
-	(*GetTransactionResponse)(nil), // 11: donation.GetTransactionResponse
+	(*DonationIdRequest)(nil),       // 0: donation.DonationIdRequest
+	(*DonationRequest)(nil),         // 1: donation.DonationRequest
+	(*DonationResponse)(nil),        // 2: donation.DonationResponse
+	(*Donation)(nil),                // 3: donation.Donation
+	(*GetDonationsRequest)(nil),     // 4: donation.GetDonationsRequest
+	(*GetDonationsResponse)(nil),    // 5: donation.GetDonationsResponse
+	(*TransactionIdRequest)(nil),    // 6: donation.TransactionIdRequest
+	(*TransactionRequest)(nil),      // 7: donation.TransactionRequest
+	(*TransactionResponse)(nil),     // 8: donation.TransactionResponse
+	(*Transaction)(nil),             // 9: donation.Transaction
+	(*GetTransactionsRequest)(nil),  // 10: donation.GetTransactionsRequest
+	(*GetTransactionsResponse)(nil), // 11: donation.GetTransactionsResponse
 }
 var file_pb_donation_proto_depIdxs = []int32{
 	3,  // 0: donation.GetDonationsResponse.donations:type_name -> donation.Donation
-	9,  // 1: donation.GetTransactionResponse.transactions:type_name -> donation.Transaction
+	9,  // 1: donation.GetTransactionsResponse.transactions:type_name -> donation.Transaction
 	0,  // 2: donation.DonationService.GetDonationByID:input_type -> donation.DonationIdRequest
 	4,  // 3: donation.DonationService.GetAllDonations:input_type -> donation.GetDonationsRequest
 	1,  // 4: donation.DonationService.CreateDonation:input_type -> donation.DonationRequest
 	1,  // 5: donation.DonationService.UpdateDonation:input_type -> donation.DonationRequest
 	6,  // 6: donation.DonationService.GetTransactionByID:input_type -> donation.TransactionIdRequest
-	10, // 7: donation.DonationService.GetAllTransactionss:input_type -> donation.GetTransactionRequest
+	10, // 7: donation.DonationService.GetAllTransactions:input_type -> donation.GetTransactionsRequest
 	7,  // 8: donation.DonationService.CreateTransaction:input_type -> donation.TransactionRequest
 	7,  // 9: donation.DonationService.UpdateTransaction:input_type -> donation.TransactionRequest
 	2,  // 10: donation.DonationService.GetDonationByID:output_type -> donation.DonationResponse
@@ -1064,7 +1064,7 @@ var file_pb_donation_proto_depIdxs = []int32{
 	2,  // 12: donation.DonationService.CreateDonation:output_type -> donation.DonationResponse
 	2,  // 13: donation.DonationService.UpdateDonation:output_type -> donation.DonationResponse
 	8,  // 14: donation.DonationService.GetTransactionByID:output_type -> donation.TransactionResponse
-	11, // 15: donation.DonationService.GetAllTransactionss:output_type -> donation.GetTransactionResponse
+	11, // 15: donation.DonationService.GetAllTransactions:output_type -> donation.GetTransactionsResponse
 	8,  // 16: donation.DonationService.CreateTransaction:output_type -> donation.TransactionResponse
 	8,  // 17: donation.DonationService.UpdateTransaction:output_type -> donation.TransactionResponse
 	10, // [10:18] is the sub-list for method output_type

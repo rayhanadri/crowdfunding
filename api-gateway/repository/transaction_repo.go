@@ -13,7 +13,6 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/rayhanadri/crowdfunding/api-gateway/entity"
-
 )
 
 type TransactionRepository interface {
@@ -32,7 +31,7 @@ func NewTransactionRepository(address string) TransactionRepository {
 	return &transactionRepository{address: address}
 }
 
-func (r *transactionRepository) GetAllTransaction(user_id int) (*[]model.Transaction, error) {
+func (r *transactionRepository) GetAllTransaction() (*[]model.Transaction, error) {
 	conn, err := grpc.Dial(
 		r.address,
 		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), // for secure TLS
@@ -52,9 +51,9 @@ func (r *transactionRepository) GetAllTransaction(user_id int) (*[]model.Transac
 	defer cancel()
 
 	// Create a request
-	req := &pb.GetTransactionRequest{} // Use the provided donationID parameter
+	req := &pb.GetTransactionsRequest{} // Use the provided donationID parameter
 	// Call the GetTransactions method
-	res, err := client.GetAllTransactions(ctx, req)
+	res, err := client.GetAllTransactionss(ctx, req)
 	if err != nil {
 		log.Printf("Error calling GetAllTransactions: %v", err)
 		return nil, err
