@@ -52,16 +52,16 @@ func (r *transactionRepository) GetAllTransaction() (*[]model.Transaction, error
 
 	// Create a request
 	req := &pb.GetTransactionsRequest{} // Use the provided donationID parameter
-	// Call the GetTransactions method
-	res, err := client.GetAllTransactionss(ctx, req)
+	// Call the GetDonations method
+	res, err := client.GetAllTransactions(ctx, req)
 	if err != nil {
 		log.Printf("Error calling GetAllTransactions: %v", err)
 		return nil, err
 	}
 
-	var donations []model.Donation
-	for _, d := range res.GetDonations() {
-		var donation model.Donation
+	var transactions []model.Transaction
+	for _, d := range res.GetTransactions() {
+		var transaction model.Transaction
 		GetCreatedAtTime, err := time.Parse(time.RFC3339, d.GetCreatedAt())
 		if err != nil {
 			return nil, fmt.Errorf("invalid created_at value: %v", err)
@@ -70,21 +70,25 @@ func (r *transactionRepository) GetAllTransaction() (*[]model.Transaction, error
 		if err != nil {
 			return nil, fmt.Errorf("invalid updated_at value: %v", err)
 		}
-		donation.ID = int(d.Id)
-		donation.UserID = int(d.UserId)
-		donation.CampaignID = int(d.CampaignId)
-		donation.Amount = float64(d.GetAmount())
-		donation.MessageText = d.GetMessage()
-		donation.Status = d.GetStatus()
-		donation.CreatedAt = GetCreatedAtTime
-		donation.UpdatedAt = GetUpdatedAtTime
-		donations = append(donations, donation)
+		transaction.ID = int(d.Id)
+		transaction.DonationID = int(d.DonationId)
+		transaction.InvoiceID = d.GetInvoiceId()
+		transaction.InvoiceURL = d.GetInvoiceUrl()
+		transaction.InvoiceDescription = d.GetInvoiceDescription()
+		transaction.PaymentMethod = d.GetPaymentMethod()
+		transaction.Amount = float64(d.GetAmount())
+		transaction.Status = d.GetStatus()
+		transaction.CreatedAt = GetCreatedAtTime
+		transaction.UpdatedAt = GetUpdatedAtTime
+
+		// push to arrays
+		transactions = append(transactions, transaction)
 	}
-	if len(donations) == 0 {
-		return nil, errors.New("no donations found")
+	if len(transactions) == 0 {
+		return nil, errors.New("no transactions found")
 	}
 
-	return &donations, nil
+	return &transactions, nil
 }
 
 func (r *transactionRepository) CreateTransaction(user_id int, transaction *model.Transaction) (*model.Transaction, error) {

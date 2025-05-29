@@ -7,7 +7,6 @@ require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.13.3
-	github.com/rayhanadri/crowdfunding/donation-service v0.0.0-20250529060202-1e5e3408805f
 	github.com/rayhanadri/crowdfunding/user-service v0.0.0-20250529060202-1e5e3408805f
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/echo-swagger v1.4.1
@@ -36,6 +35,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rayhanadri/crowdfunding/donation-service v0.0.0-20250529072825-c8c3e8146958 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
