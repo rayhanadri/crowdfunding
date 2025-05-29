@@ -1,9 +1,8 @@
 package repository
 
 import (
+	"github.com/rayhanadri/crowdfunding/donation-service/model"
 	"github.com/stretchr/testify/mock"
-
-	"crowdfund/model"
 )
 
 type MockUserDonationInterface interface {

@@ -7,12 +7,12 @@ import (
 	"log"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-
 	// "crowdfund/model"
+
 	"github.com/rayhanadri/crowdfunding/user-service/model"
 	"github.com/rayhanadri/crowdfunding/user-service/pb"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type UserRepository interface {
@@ -37,7 +37,7 @@ func (r *userRepository) GetUserByID(id int) (*model.User, error) {
 	)
 
 	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
@@ -46,7 +46,7 @@ func (r *userRepository) GetUserByID(id int) (*model.User, error) {
 	// Create a new client
 	client := pb.NewUserServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	// Create a request
@@ -54,7 +54,7 @@ func (r *userRepository) GetUserByID(id int) (*model.User, error) {
 	// Call the GetUserByID method
 	res, err := client.GetUserByID(ctx, req)
 	if err != nil {
-		log.Fatalf("Error calling GetUserByID: %v", err)
+		log.Printf("Error calling GetUserByID: %v", err)
 		return nil, err
 	}
 
@@ -96,7 +96,7 @@ func (r *userRepository) CreateUser(user *model.User) (*model.User, error) {
 	)
 
 	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
@@ -105,7 +105,7 @@ func (r *userRepository) CreateUser(user *model.User) (*model.User, error) {
 	// Create a new client
 	client := pb.NewUserServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	// Create a request
@@ -113,7 +113,7 @@ func (r *userRepository) CreateUser(user *model.User) (*model.User, error) {
 	// Call the CreateUser method
 	res, err := client.CreateUser(ctx, req)
 	if err != nil {
-		log.Fatalf("Error calling CreateUser: %v", err)
+		log.Printf("Error calling CreateUser: %v", err)
 		return nil, err
 	}
 
@@ -151,7 +151,7 @@ func (r *userRepository) UpdateUser(user *model.User) (*model.User, error) {
 	)
 
 	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
@@ -160,7 +160,7 @@ func (r *userRepository) UpdateUser(user *model.User) (*model.User, error) {
 	// Create a new client
 	client := pb.NewUserServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	// Create a request
@@ -168,7 +168,7 @@ func (r *userRepository) UpdateUser(user *model.User) (*model.User, error) {
 	// Call the CreateUser method
 	res, err := client.UpdateUser(ctx, req)
 	if err != nil {
-		log.Fatalf("Error calling UpdateUser: %v", err)
+		log.Printf("Error calling UpdateUser: %v", err)
 		return nil, err
 	}
 
@@ -198,7 +198,7 @@ func (r *userRepository) LoginUser(user *model.User) (*model.User, error) {
 	)
 
 	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
+		log.Printf("Did not connect: %v", err)
 		return nil, err
 	}
 
@@ -207,15 +207,15 @@ func (r *userRepository) LoginUser(user *model.User) (*model.User, error) {
 	// Create a new client
 	client := pb.NewUserServiceClient(conn)
 	// Set a timeout for the request
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	// Create a request
 	req := &pb.UserLoginRequest{Email: user.Email, Password: user.Password}
-	// Call the CreateUser method
-	res, err := client.UpdateUser(ctx, req)
+	// Call the LoginUser method
+	res, err := client.LoginUser(ctx, req)
 	if err != nil {
-		log.Fatalf("Error calling UpdateUser: %v", err)
+		log.Printf("Error calling LoginUser: %v", err)
 		return nil, err
 	}
 
@@ -231,7 +231,7 @@ func (r *userRepository) LoginUser(user *model.User) (*model.User, error) {
 	user.ID = int(res.Id)
 	user.Name = res.Name
 	user.Email = res.Email
-	user.Password = res.Password
+	user.Password = ""
 	user.CreatedAt = GetCreatedAtTime
 	user.UpdatedAt = GetUpdatedAtTime
 

@@ -4,9 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/rayhanadri/crowdfunding/donation-service/model"
 	"gorm.io/gorm"
-
-	"crowdfund/model"
 )
 
 type DonationRepository interface {

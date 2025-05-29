@@ -1,10 +1,9 @@
 package repository
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	"crowdfund/model"
 
+	"github.com/stretchr/testify/mock"
 )
 
 type MockUserRepositoryInterface interface {

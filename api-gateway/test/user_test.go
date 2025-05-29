@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"crowdfund/model"
-	"crowdfund/repository"
+	"github.com/rayhanadri/crowdfunding/api-gateway/model"
+	"github.com/rayhanadri/crowdfunding/api-gateway/repository"
 )
 
 func TestGetUserByID_Success(t *testing.T) {

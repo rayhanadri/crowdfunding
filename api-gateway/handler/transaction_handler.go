@@ -6,9 +6,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"crowdfund/external"
-	"crowdfund/model"
-	"crowdfund/repository"
+	"github.com/rayhanadri/crowdfunding/api-gateway/external"
+	"github.com/rayhanadri/crowdfunding/api-gateway/model"
+	"github.com/rayhanadri/crowdfunding/api-gateway/repository"
 )
 
 type TransactionHandler interface {

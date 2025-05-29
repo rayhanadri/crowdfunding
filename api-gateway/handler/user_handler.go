@@ -9,11 +9,10 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
-
-	"crowdfund/entity"
-	"crowdfund/repository"
 	"github.com/rayhanadri/crowdfunding/user-service/model"
 
+	"github.com/rayhanadri/crowdfunding/api-gateway/entity"
+	"github.com/rayhanadri/crowdfunding/api-gateway/repository"
 )
 
 type UserHandler interface {

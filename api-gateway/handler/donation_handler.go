@@ -6,9 +6,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"crowdfund/model"
-	"crowdfund/repository"
-
+	"github.com/rayhanadri/crowdfunding/api-gateway/model"
+	"github.com/rayhanadri/crowdfunding/api-gateway/repository"
 )
 
 type DonationHandler interface {
