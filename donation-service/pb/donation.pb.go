@@ -4,6 +4,7 @@
 // 	protoc        v3.21.12
 // source: pb/donation.proto
 
+
 package pb
 
 import (
