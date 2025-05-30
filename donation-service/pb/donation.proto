@@ -37,7 +37,7 @@ message DonationResponse {
   int32 user_id = 4;
   int32 campaign_id = 5;
   float amount = 6;
-  string message = 7;
+  string message_text = 7;
   string status = 8;
   string createdAt = 9;
   string updatedAt = 10;

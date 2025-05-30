@@ -254,7 +254,7 @@ func (s *DonationService) GetDonationByID(ctx context.Context, req *pb.DonationI
 
 func (r *DonationService) CreateDonation(ctx context.Context, req *pb.DonationRequest) (*pb.DonationResponse, error) {
 	donation := &model.Donation{
-		UserID:     int(req.GetId()),
+		UserID:     int(req.GetUserId()),
 		CampaignID: int(req.GetCampaignId()),
 		Amount:     float64(req.GetAmount()),
 		Message:    req.GetMessage(),
@@ -283,7 +283,7 @@ func (r *DonationService) CreateDonation(ctx context.Context, req *pb.DonationRe
 
 	if err := config.DB.Last(donation).Error; err != nil {
 		response := &pb.DonationResponse{
-			Message: "Failed to create user",
+			Message: "Failed to create donation",
 			Error:   err.Error(),
 		}
 
@@ -317,6 +317,10 @@ func (r *DonationService) UpdateDonation(ctx context.Context, req *pb.DonationRe
 	}
 
 	if err := config.DB.Model(donation).Updates(donation).Error; err != nil {
+		return nil, err
+	}
+
+	if err := config.DB.First(donation, donation.ID).Error; err != nil {
 		return nil, err
 	}
 
@@ -521,6 +525,10 @@ func (r *DonationService) UpdateTransaction(ctx context.Context, req *pb.Transac
 		return nil, err
 	}
 
+	if err := config.DB.First(transaction, transaction.ID).Error; err != nil {
+		return nil, err
+	}
+
 	// Create a user response
 	response := &pb.TransactionResponse{
 		Id:                 int32(transaction.ID),
@@ -617,6 +625,10 @@ func (r *DonationService) SyncTransaction(ctx context.Context, req *pb.Transacti
 
 		}
 
+	}
+
+	if err := config.DB.First(transaction, transaction.ID).Error; err != nil {
+		return nil, err
 	}
 
 	// Create a transaction response
