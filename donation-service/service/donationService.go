@@ -326,14 +326,14 @@ func (r *DonationService) UpdateDonation(ctx context.Context, req *pb.DonationRe
 
 	// Create a user response
 	response := &pb.DonationResponse{
-		Id:         int32(donation.ID),
-		UserId:     int32(donation.UserID),
-		CampaignId: int32(donation.CampaignID),
-		Amount:     float32(donation.Amount),
-		Message:    donation.Message,
-		Status:     donation.Status,
-		CreatedAt:  donation.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:  donation.UpdatedAt.Format(time.RFC3339),
+		Id:          int32(donation.ID),
+		UserId:      int32(donation.UserID),
+		CampaignId:  int32(donation.CampaignID),
+		Amount:      float32(donation.Amount),
+		MessageText: donation.Message,
+		Status:      donation.Status,
+		CreatedAt:   donation.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   donation.UpdatedAt.Format(time.RFC3339),
 	}
 
 	return response, nil
